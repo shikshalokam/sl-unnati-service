@@ -9,7 +9,7 @@ var router              = express.Router();
 // var mime                = require('mime');
 // var path                = require('path');
 
-
+var winston = require('../../config/winston');
 var projectServe = require('../../services/project.service');
 
 // routes
@@ -28,6 +28,7 @@ router.post('/projectsByEntity',projectsByEntity);
 router.post('/projectsDetailsById',projectsDetailsById);
 router.get('/getTaskDetailsById/:id',getTaskDetailsById);
 router.get('/getSubTaskDetails/:subTaskId/:taskId',getSubTaskDetails);
+router.post('/getProjectPdf',getProjectPdf);
 module.exports = router;
 
 function createProject(req, res) {
@@ -137,6 +138,16 @@ function getSubTaskDetails(req,res){
         res.send(result);
     }).catch(e => {
         console.log("erorr while featching data",e);
+        res.send(e);
+      });
+}
+function getProjectPdf(req,res){
+
+    projectServe.getProjectPdf(req)
+    .then(function(result){
+        res.send(result);
+    }).catch(e => {
+        winston.error("erorr while get Project Pdf",e);
         res.send(e);
       });
 }
