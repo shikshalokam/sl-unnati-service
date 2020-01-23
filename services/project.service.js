@@ -53,6 +53,7 @@ api.projectsByEntity = projectsByEntity;
 api.projectsDetailsById = projectsDetailsById;
 api.getTaskDetailsById = getTaskDetailsById;
 api.getSubTaskDetails = getSubTaskDetails;
+api.getProjectPdf = getProjectPdf;
 module.exports = api;
 
 /**
@@ -350,7 +351,7 @@ function syncProject(req) {
 
             if (req.body.templateId) {
                 let projectMap = await commonHandler.updateProjectFromTemplateReferance(req);
-                if (projectMap.status &&  projectMap.status=="success") {
+                if (projectMap.status && projectMap.status == "success") {
                     let obj = {
                         body: {
                             projectId: projectMap.response.projectIds[0]
@@ -358,7 +359,7 @@ function syncProject(req) {
                     }
                     let prjectDetails = await projectsDetailsById(obj);
                     if (prjectDetails.status && prjectDetails.status == "success") {
-    
+
                         delete projectMap.response;
                         projectMap.projectDetails = prjectDetails;
                         deferred.resolve(projectMap);
@@ -368,7 +369,7 @@ function syncProject(req) {
                 } else {
                     deferred.resolve(projectMap);
                 }
-                    
+
             } else {
                 deferred.resolve({ status: "failed", message: "templateId not found" });
             }
@@ -1130,3 +1131,63 @@ function getSubTaskDetails(req) {
     })
 }
 
+function getProjectPdf(req) {
+    return new Promise(async function (resolve, reject) {
+        try {
+            // console.log("req.body.projectId",req.body.projectId)
+            let projectData = await getProjectAndTaskDetails(req.body.projectId);
+             if (projectData) {
+
+                try {
+                    let url = config.dhiti_config.api_base_url + config.dhiti_config.getProjectPdf;
+                    request({
+                        url: url,
+                        method: "POST",
+                        headers: {
+                            'x-auth-token': req.headers['x-auth-token'],
+                            'Content-Type':'application/json'
+                        },
+                        json: true,   // <--Very important!!!
+                        body: projectData
+                    }, function (error, response, body){
+                        // console.log(response);
+                       if (error) {
+                            winston.error("Error at getProjectPdf ()" + error);
+                            reject(body);
+
+                        } else {
+                            resolve(body);
+                        }
+
+                    });
+
+                    // request.post({
+                    //     headers: {
+                    //         'x-auth-token': req.headers['x-auth-token'],
+                    //         'Content-Type':'application/json'
+                    //     }, url: url, projectData
+                    // }, async function (error, httpResponse, body) {
+                    //     if (error) {
+                    //         console.log("error", error);
+                    //         winston.error("Error at getProjectPdf ()" + error);
+                    //         reject(body);
+
+                    //     } else {
+                    //         resolve(body);
+                    //     }
+                    // });
+
+                }
+                catch (ex) {
+                    console.log("ex", ex);
+                }
+            } else {
+                resolve({ status: "failed", "message": "project not found" });
+            }
+
+        } catch (error) {
+            winston.error(error);
+            reject(error);
+        }
+    });
+}
