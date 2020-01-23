@@ -15,7 +15,8 @@
     "dhiti_config": {
         "api_base_url": "",
         "observationsByEntity": "",
-        "instanceLevelPdfReports": ""
+        "instanceLevelPdfReports": "",
+        "getProjectPdf":""
     },
     "Kafka":{
         "host":"",
