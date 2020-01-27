@@ -491,6 +491,10 @@ function projectCreateAndSolutionMapping(obj) {
                             var projectTaskSchema = {
                                 "projectId": projectDoc._id,
                                 "title": el.title,
+                                "imageUrl" : el.imageUrl ? el.imageUrl : "",
+                                "fileUrl" : el.fileUrl ? el.fileUrl : "",
+                                "remarks" : el.remarks ? el.remarks : "",
+
                                 // "startDate": element.start_date,
                                 // "endDate": element.end_date,
                                 "status": el.status ? el.status : "not yet started",

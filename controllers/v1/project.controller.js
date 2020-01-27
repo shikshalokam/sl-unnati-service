@@ -47,7 +47,7 @@ function getAllProjects(req, res) {
         });
 }
 
-function syncProject(req, res){
+function syncProject(req, res) {
     
     projectServe.syncProject(req)
         .then(function (result) {
@@ -56,45 +56,48 @@ function syncProject(req, res){
 
 }
 
-function createTask(req,res){
+function createTask(req,res) {
     projectServe.createTask(req)
         .then(function (result) {
             res.send(result);
         });
 }
-function createSubTask(req,res){
+
+function createSubTask(req,res) {
     projectServe.createSubTask(req)
     .then(function (result) {
         res.send(result);
     });
 }
 
-function syncSubTask(req,res){
-
-    
+function syncSubTask(req,res) {
     projectServe.syncSubTask(req)
     .then(function (result) {
         res.send(result);
     });
 }
-function getMindTreeProjects(req,res){
+
+function getMindTreeProjects(req,res) {
     projectServe.getMindTreeProjects(req)
     .then(function (result) {
         res.send(result);
     });
 }
-function deleteTask(req,res){
+
+function deleteTask(req,res) {
     projectServe.deleteTask(req)
     .then(function (result) {
         res.send(result);
     });
 }
-function deleteSubTask(req,res){
+
+function deleteSubTask(req,res) {
     projectServe.deleteSubTask(req)
     .then(function (result) {
         res.send(result);
     });
 }
+
 function taskSync(req,res){
     projectServe.taskSync(req)
     .then(function (result) {

@@ -164,6 +164,7 @@ function getAllProjectsOld(req) {
     }
     return deferred.promise;
 }
+
 function getAllProjects(req) {
     var deferred = Q.defer();
     let dataObj = [];
@@ -284,8 +285,6 @@ function getAllProjects(req) {
     return deferred.promise;
 }
 
-
-
 /**
  * is used get the project data and tasks details of specific projectId
  * @param {*} projectId 
@@ -321,7 +320,6 @@ async function getProjectAndTaskDetails(projectId) {
 
 }
 
-
 function syncProject(req) {
 
     var deferred = Q.defer();
@@ -343,6 +341,8 @@ function syncProject(req) {
     };
 
     //map the project to template only if createdType is by referance
+
+    // Get hardcoded value from .env file.
     if (req.body && req.body.createdType && req.body.createdType == "by reference") {
 
         async function updateProjectWithReferanceTemplate() {
@@ -434,7 +434,10 @@ function syncProject(req) {
                             "subTasks": element.subTasks,
                             "projectId": req.body._id,
                             "userId": req.body.userId,
-                            "isDeleted": false
+                            "isDeleted": false,
+                            "imageUrl" : req.body.imageUrl ? req.body.imageUrl : "",
+                            "fileUrl" : req.body.fileUrl ? req.body.fileUrl : "",
+                            "remarks" : req.body.remarks ? req.body.remarks : ""
                         });
                         taskData.save(taskData, function (err, taskDt) {
                             loop = loop + 1;
@@ -485,8 +488,6 @@ function syncProject(req) {
     }
     return deferred.promise;
 }
-
-
 
 function createTask(req) {
 
