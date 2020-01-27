@@ -26,9 +26,10 @@ var taskModel = mongoose.model('userProjectsTasks',new mongoose.Schema({
 						"isDeleted":false,
 						"lastSync" : { type:Date, default:dateFormat },
 						"assignedTo":Array
-
-					}
-		
-				]
+					}],
+			"imageUrl" : { type : String , default : "" },
+			"fileUrl" : { type : String ,default : "" },
+			"remarks" : { type : String ,default : "" }
+				
 },{ collection:'userProjectsTasks' }) );
 module.exports = taskModel;

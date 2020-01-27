@@ -30,6 +30,7 @@ var notification            = require('./helpers/notifications');
 var cronSchedular           = require('./helpers/cron-schedular');
 
 
+// connection should come from config.
 mongoose.connect(config.DB_URL, { useNewUrlParser: true });
 mongoose.set('useNewUrlParser', true);
 mongoose.set('useFindAndModify', false);
@@ -57,10 +58,11 @@ app.use(function (req, res, next) { //allow cross origin requests
 app.use(morgan('combined', { stream: winston.stream })); 
 var options = {
     explorer: true
-  };
+};
    
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, options));
 
+// This should come from middleware.
 
 function authenticate(req,res,next){
 

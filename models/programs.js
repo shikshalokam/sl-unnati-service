@@ -1,3 +1,6 @@
+// We should get this from samiksha service instead of hardcoding models in unnati
+// and samiksha.
+
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema,ObjectId = Schema.ObjectId;
 var programModel = mongoose.model('programs',new mongoose.Schema({
