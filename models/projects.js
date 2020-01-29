@@ -21,7 +21,7 @@ var projectModel = mongoose.model('userProjects',new mongoose.Schema({
 	"solutionId":ObjectId,
 	"programId":ObjectId,
 	"programManagers":Array,
-	"isDeleted":Boolean,
+	"isDeleted": { type : Boolean,default : false },
 	"entityType":String,
 	"entityId":ObjectId,
 	"category":Array,

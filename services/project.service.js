@@ -331,6 +331,7 @@ function syncProject(req) {
         "collaborator": req.body.collaborator,
         "organisation": req.body.organisation,
         "duration": req.body.duration,
+        "isDeleted" : req.body.isDeleted ? req.body.isDeleted : false,
         "difficultyLevel": req.body.difficultyLevel,
         "status": req.body.status,
         // "lastSync": { type : Date, default: Date.now },
@@ -409,14 +410,15 @@ function syncProject(req) {
 
             // console.log("doc", doc);
 
-            if (doc) {
-                projectsModel.findOneAndUpdate({ '_id': req.body._id }, syncData, (function (err, projectDoc) {
+            if (doc) {  
+                projectsModel.findOneAndUpdate({ '_id': req.body._id }, syncData, {new: true}, (function (err, projectDoc) {
                     if (err) {
                         deferred.resolve(err);
                     }
-                    if (projectDoc) {
+                    
+                    // if (projectDoc) {
                         // deferred.resolve({ status: "200", message: "project data" });
-                    }
+                    // }
                 }));
                 var taskUpdateData = req.body.tasks;
                 var loop = 0;
