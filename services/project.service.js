@@ -422,6 +422,8 @@ async function syncProject(req) {
         let allProjectData = await getAllProjects(requestedData);
         projectsModel.findOne({ '_id': req.body._id }, function (err, doc) {
 
+            // console.log("doc", doc);
+
             if (doc) {  
                 projectsModel.findOneAndUpdate({ '_id': req.body._id }, syncData, {new: true}, (function (err, projectDoc) {
                     if (err) {
