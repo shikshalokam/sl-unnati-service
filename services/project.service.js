@@ -450,7 +450,7 @@ async function syncProject(req) {
                             "userId": req.body.userId,
                             "isDeleted": false,
                             "imageUrl" : req.body.imageUrl ? req.body.imageUrl : "",
-                            "fileUrl" : req.body.fileUrl ? req.body.fileUrl : "",
+                            "file" : req.body.file ? req.body.file : {},
                             "remarks" : req.body.remarks ? req.body.remarks : ""
                         });
                         taskData.save(taskData, function (err, taskDt) {
