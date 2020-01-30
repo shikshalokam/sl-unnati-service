@@ -320,7 +320,7 @@ async function getProjectAndTaskDetails(projectId) {
 
 }
 
-function syncProject(req) {
+async function syncProject(req) {
 
     var deferred = Q.defer();
     var syncData = {
@@ -343,7 +343,16 @@ function syncProject(req) {
 
     //map the project to template only if createdType is by referance
 
+    let requestedData = {
+        body: {
+            userId : req.body.userId
+        },
+        query : {
+            type : req.query.type ? req.query.type : "month"
+        }
+    }
     // Get hardcoded value from .env file.
+
     if (req.body && req.body.createdType && req.body.createdType == "by reference") {
 
         async function updateProjectWithReferanceTemplate() {
@@ -361,8 +370,11 @@ function syncProject(req) {
                     let prjectDetails = await projectsDetailsById(obj);
                     if (prjectDetails.status && prjectDetails.status == "success") {
 
+                        let allProjectData = await getAllProjects(requestedData);
+
                         delete projectMap.response;
                         projectMap.projectDetails = prjectDetails;
+                        projectMap.allProjects = allProjectData;
                         deferred.resolve(projectMap);
                     } else {
                         deferred.resolve(prjectDetails);
@@ -392,8 +404,9 @@ function syncProject(req) {
                 }
                 let prjectDetails = await projectsDetailsById(obj);
                 if (prjectDetails.status && prjectDetails.status == "success") {
-
+                    let allProjectData = await getAllProjects(requestedData);
                     response.projectDetails = prjectDetails;
+                    response.allProjects = allProjectData;
                     deferred.resolve(response);
                 } else {
                     deferred.resolve(prjectDetails);
@@ -406,6 +419,7 @@ function syncProject(req) {
         createTemplate();
 
     } else {
+        let allProjectData = await getAllProjects(requestedData);
         projectsModel.findOne({ '_id': req.body._id }, function (err, doc) {
 
             // console.log("doc", doc);
@@ -477,7 +491,7 @@ function syncProject(req) {
                             if (loop == taskUpdateData.length) {
                                 getProjectAndTaskDetails(req.body._id).then(function (response) {
                                     commonHandler.projectCompletedNotificationPoint(req.body._id);
-                                    deferred.resolve({ status: "succes", message: "sync successfully done", data: response });
+                                    deferred.resolve({ status: "succes", message: "sync successfully done", data: response, allProjects : allProjectData });
                                 });
                             }
                         }));
