@@ -438,8 +438,6 @@ async function syncProject(req) {
                 var loop = 0;
                 taskUpdateData.forEach(element => {
                     if (element.isNew == true) {
-                        // to create a new task 
-                        // createTask();
                         var taskData = new taskModel({
                             "title": element.title,
                             "startDate": element.startDate,
@@ -485,9 +483,6 @@ async function syncProject(req) {
                                 deferred.resolve(err);
                             }
                             loop = loop + 1;
-                            // console.log("taskUpdateDataInfo", taskUpdateDataInfo);
-                            //    if (taskUpdateDataInfo) {
-                            //     }
                             if (loop == taskUpdateData.length) {
                                 getProjectAndTaskDetails(req.body._id).then(function (response) {
                                     commonHandler.projectCompletedNotificationPoint(req.body._id);
