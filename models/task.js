@@ -30,5 +30,5 @@ var taskModel = mongoose.model('userProjectsTasks',new mongoose.Schema({
 			"imageUrl" : String ,
 			"file" : Object ,
 			"remarks" : { type : String , default : "" }
-},{ collection:'userProjectsTasks' },{ minimize: false }) );
+},{ collection:'userProjectsTasks' }) );
 module.exports = taskModel;

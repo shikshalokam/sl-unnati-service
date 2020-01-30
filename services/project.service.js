@@ -449,9 +449,9 @@ async function syncProject(req) {
                             "projectId": req.body._id,
                             "userId": req.body.userId,
                             "isDeleted": false,
-                            "imageUrl" : req.body.imageUrl ? req.body.imageUrl : "",
-                            "file" : req.body.file ? req.body.file : {},
-                            "remarks" : req.body.remarks ? req.body.remarks : ""
+                            "imageUrl" : element.imageUrl ? element.imageUrl : "",
+                            "file" : element.file ? element.file : {},
+                            "remarks" : element.remarks ? element.remarks : ""
                         });
                         taskData.save(taskData, function (err, taskDt) {
                             loop = loop + 1;
@@ -467,17 +467,16 @@ async function syncProject(req) {
                             }
                         });
                     } else if (element._id) {
-                        var taskData = {
-                            "title": element.title,
-                            "startDate": element.startDate,
-                            "endDate": element.endDate,
-                            "status": element.status,
-                            "assignedTo": element.assignedTo,
-                            "lastSync": moment().format(),
-                            "isDeleted": element.isDeleted,
-                            "subTasks": element.subTasks
-                        };
-                        taskModel.findOneAndUpdate({ '_id': element._id }, taskData, (function (err, taskUpdateDataInfo) {
+
+                        let taskData = {};
+                        Object.keys(element).forEach(eachElement=>{
+                            if(["startDate","endDate","isDeleted","_id","projectId","programId","createdAt","projectStarted"].indexOf(eachElement) == -1){ 
+                                taskData[eachElement] = element[eachElement];
+                            }
+                        });
+
+
+                        taskModel.findOneAndUpdate({ '_id': element._id }, taskData,{new: true}, (function (err, taskUpdateDataInfo) {
                             if (err) {
                                 console.log("err--", err);
                                 deferred.resolve(err);
