@@ -492,7 +492,7 @@ function projectCreateAndSolutionMapping(obj) {
                                 "projectId": projectDoc._id,
                                 "title": el.title,
                                 "imageUrl" : el.imageUrl ? el.imageUrl : "",
-                                "fileUrl" : el.fileUrl ? el.fileUrl : "",
+                                "file" : el.file ? el.file : {},
                                 "remarks" : el.remarks ? el.remarks : "",
 
                                 // "startDate": element.start_date,

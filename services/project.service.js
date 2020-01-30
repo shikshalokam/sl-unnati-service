@@ -320,7 +320,7 @@ async function getProjectAndTaskDetails(projectId) {
 
 }
 
-function syncProject(req) {
+async function syncProject(req) {
 
     var deferred = Q.defer();
     var syncData = {
@@ -343,7 +343,16 @@ function syncProject(req) {
 
     //map the project to template only if createdType is by referance
 
+    let requestedData = {
+        body: {
+            userId : req.body.userId
+        },
+        query : {
+            type : req.query.type ? req.query.type : "month"
+        }
+    }
     // Get hardcoded value from .env file.
+
     if (req.body && req.body.createdType && req.body.createdType == "by reference") {
 
         async function updateProjectWithReferanceTemplate() {
@@ -361,8 +370,11 @@ function syncProject(req) {
                     let prjectDetails = await projectsDetailsById(obj);
                     if (prjectDetails.status && prjectDetails.status == "success") {
 
+                        let allProjectData = await getAllProjects(requestedData);
+
                         delete projectMap.response;
                         projectMap.projectDetails = prjectDetails;
+                        projectMap.allProjects = allProjectData;
                         deferred.resolve(projectMap);
                     } else {
                         deferred.resolve(prjectDetails);
@@ -392,8 +404,9 @@ function syncProject(req) {
                 }
                 let prjectDetails = await projectsDetailsById(obj);
                 if (prjectDetails.status && prjectDetails.status == "success") {
-
+                    let allProjectData = await getAllProjects(requestedData);
                     response.projectDetails = prjectDetails;
+                    response.allProjects = allProjectData;
                     deferred.resolve(response);
                 } else {
                     deferred.resolve(prjectDetails);
@@ -406,6 +419,7 @@ function syncProject(req) {
         createTemplate();
 
     } else {
+        let allProjectData = await getAllProjects(requestedData);
         projectsModel.findOne({ '_id': req.body._id }, function (err, doc) {
 
             // console.log("doc", doc);
@@ -424,8 +438,6 @@ function syncProject(req) {
                 var loop = 0;
                 taskUpdateData.forEach(element => {
                     if (element.isNew == true) {
-                        // to create a new task 
-                        // createTask();
                         var taskData = new taskModel({
                             "title": element.title,
                             "startDate": element.startDate,
@@ -437,9 +449,9 @@ function syncProject(req) {
                             "projectId": req.body._id,
                             "userId": req.body.userId,
                             "isDeleted": false,
-                            "imageUrl" : req.body.imageUrl ? req.body.imageUrl : "",
-                            "fileUrl" : req.body.fileUrl ? req.body.fileUrl : "",
-                            "remarks" : req.body.remarks ? req.body.remarks : ""
+                            "imageUrl" : element.imageUrl ? element.imageUrl : "",
+                            "file" : element.file ? element.file : {},
+                            "remarks" : element.remarks ? element.remarks : ""
                         });
                         taskData.save(taskData, function (err, taskDt) {
                             loop = loop + 1;
@@ -455,29 +467,25 @@ function syncProject(req) {
                             }
                         });
                     } else if (element._id) {
-                        var taskData = {
-                            "title": element.title,
-                            "startDate": element.startDate,
-                            "endDate": element.endDate,
-                            "status": element.status,
-                            "assignedTo": element.assignedTo,
-                            "lastSync": moment().format(),
-                            "isDeleted": element.isDeleted,
-                            "subTasks": element.subTasks
-                        };
-                        taskModel.findOneAndUpdate({ '_id': element._id }, taskData, (function (err, taskUpdateDataInfo) {
+
+                        let taskData = {};
+                        Object.keys(element).forEach(eachElement=>{
+                            if(["startDate","endDate","isDeleted","_id","projectId","programId","createdAt","projectStarted"].indexOf(eachElement) == -1){ 
+                                taskData[eachElement] = element[eachElement];
+                            }
+                        });
+
+
+                        taskModel.findOneAndUpdate({ '_id': element._id }, taskData,{new: true}, (function (err, taskUpdateDataInfo) {
                             if (err) {
                                 console.log("err--", err);
                                 deferred.resolve(err);
                             }
                             loop = loop + 1;
-                            // console.log("taskUpdateDataInfo", taskUpdateDataInfo);
-                            //    if (taskUpdateDataInfo) {
-                            //     }
                             if (loop == taskUpdateData.length) {
                                 getProjectAndTaskDetails(req.body._id).then(function (response) {
                                     commonHandler.projectCompletedNotificationPoint(req.body._id);
-                                    deferred.resolve({ status: "succes", message: "sync successfully done", data: response });
+                                    deferred.resolve({ status: "succes", message: "sync successfully done", data: response, allProjects : allProjectData });
                                 });
                             }
                         }));
