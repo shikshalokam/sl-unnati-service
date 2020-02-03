@@ -1,0 +1,730 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "Unnati",
+    "description": "API's for unnati service"
+  },
+  "host": "localhost:8082",
+  "basePath": "/unnati/api/",
+  "tags": [
+    {
+      "name": "Unnati",
+      "description": "API's for unnati service"
+    }
+  ],
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+
+    "/utilities/createImpTemplates":{
+      "post": {
+        "tags": [
+          "Create Improvement Project Templates"
+        ],
+        "description": "imp template creation api",
+        "parameters": [
+          { "name": "x-auth-token","in": "header","type": "string","required": true },
+          { "name": "projectsTemplate", "in": "formData", "required": true, "type": "file" },
+          { "name": "taskDetails", "in": "formData", "required": true, "type": "file" }
+          
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "utilities/mapSolutionsToProgram":{
+      "post": {
+        "tags": [
+          "Map solutions to Program"
+        ],
+        "description": "Map solutions to Program",
+        "parameters": [
+          { "name": "x-auth-token","in": "header","type": "string","required": true },
+          {
+            "name": "taskSync",
+            "in": "body",
+            "description": "Sync task details",
+            "schema": {
+              "required": [
+                ""
+              ],
+              "properties": {
+                "impTemplateId": { "type": "string","required": [ "impTemplateId" ] },
+                "programId": { "type": "string","required": [ "programId" ] }
+              }
+            }
+          }
+          
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/utilities/mapUsersToSolution":{
+      "post": {
+        "tags": [
+          "Map users to solutions"
+        ],
+        "description": "Map users to solutions",
+        "parameters": [
+          { "name": "x-auth-token","in": "header","type": "string","required": true },
+          { "name": "template", "in": "formData", "required": true, "type": "file" }
+          
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/project/sync": {
+      "post": {
+        "tags": [
+          "To sync the data at project level"
+        ],
+        "description": "To sync the data at project level",
+        "parameters": [
+          {
+            "name": "x-auth-token",
+            "in": "header",
+            "type": "string",
+            "required": true
+          },
+          {
+            "name": "sync",
+            "in": "body",
+            "description": "Sync task details",
+            "schema": {
+              "$ref": "#/definitions/ProjectSync"
+            }
+          }
+          
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/all": {
+      "get": {
+        "tags": [
+          "Get All projects"
+        ],
+        "description": "to get all project and program details",
+        "parameters": [
+          {
+            "name": "x-auth-token",
+            "in": "header",
+            "type": "string",
+            "required": true
+          }
+          
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/taskSync": {
+      "post": {
+        "tags": [
+          "Task Sync"
+        ],
+        "description": "to Sync the task details",
+        "parameters": [
+          {
+            "name": "x-auth-token",
+            "in": "header",
+            "type": "string",
+            "required": true
+          },
+          {
+            "name": "taskSync",
+            "in": "body",
+            "description": "Sync task details",
+            "schema": {
+              "$ref": "#/definitions/taskSync"
+            }
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/syncSubTask": {
+      "post": {
+        "tags": [
+          "Sub Task Sync"
+        ],
+        "description": "to Sync the task details",
+        "parameters": [
+          {
+            "name": "x-auth-token",
+            "in": "header",
+            "type": "string",
+            "required": true
+          },
+          {
+            "name": "SubTaskSync",
+            "in": "body",
+            "description": "API is used to Sync the subTask details",
+            "schema": {
+              "$ref": "#/definitions/SubTaskSync"
+            }
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/deleteTask": {
+      "delete": {
+        "tags": [
+          "Delete Task"
+        ],
+        "description": "to delete the task",
+        "parameters": [
+          {
+            "name": "x-auth-token",
+            "in": "header",
+            "type": "string",
+            "required": true
+          },
+          {
+            "name": "SubTaskSync",
+            "in": "body",
+            "description": "API is used to delete the task",
+            "schema": {
+                "required": [
+                  ""
+                ],
+                "properties": {
+                  "taskId": {
+                    "type": "string",
+                    "required": [
+                      "taskId"
+                    ]
+                  }
+                }
+            }
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/deleteSubTask": {
+      "delete": {
+        "tags": [
+          "Delete Sub Task"
+        ],
+        "description": "to delete the subTask",
+        "parameters": [
+          {
+            "name": "x-auth-token",
+            "in": "header",
+            "type": "string",
+            "required": true
+          },
+          {
+            "name": "SubTaskSync",
+            "in": "body",
+            "description": "API is used to delete the sub task ",
+            "schema": {
+                "required": [
+                  ""
+                ],
+                "properties": {
+                  "taskId": {
+                    "type": "string",
+                    "required": [
+                      "taskId"
+                    ]
+                  },
+                  "subTaskId":{
+                    "type": "string",
+                    "required": [
+                      "taskId"
+                    ]
+                  }
+                }
+            }
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/reports/getMonthViseReport": {
+      "get": {
+        "tags": [
+          "Get Report"
+        ],
+        "description": "to get report of last month or last quarter",
+        "parameters": [
+          {
+            "name": "x-auth-token",
+            "in": "header",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200":{"description":"successful operation","schema":{"$ref":"#/definitions/monthReport"}}
+        }
+      }
+    },
+    "/v1/reports/getDetailViewReport?reportType": {
+      "get": {
+        "tags": [
+          "Get Report"
+        ],
+        "description": "to get report of last month or last quarter",
+        "parameters": [
+          {
+            "name": "x-auth-token",
+            "in": "header",
+            "type": "string",
+            "required": true
+          },
+          {
+            "name": "reportType",
+            "in": "path",
+            "type": "string",
+            "required": true
+          }
+
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200":{"description":"successful operation","schema":{"$ref":"#/definitions/chartReport"}}
+        }
+      }
+    } 
+  },
+  "definitions": {
+    "ProjectSync":{
+      "required": [
+        ""
+      ],
+      "properties": {
+        "_id": { "type": "string","required": [ "_id" ] },
+        "collaborator":{ "type":"array", "items":{ "type": "string" } },
+        "primaryAudience":{ "type":"array", "items":{ "type": "string" } },
+        "concepts":{ "type":"array", "items":{ "type": "string" } },
+        "keywords":{ "type":"array", "items":{ "type": "string" } },
+        "title":{ "type":"string" },
+        "goal":{ "type":"string" },
+        "organisation":{ "type":"string" },
+        "duration":{ "type":"string" },
+        "difficultyLevel":{ "type":"string" },
+        "status":{ "type":"string" },
+        "tasks":{ 
+          "type":"array",
+          "items":{
+            "type":"object",
+            "properties":{
+              "_id": { "type": "string","required": [ "_id" ] },
+              "projectId": { "type": "string","required": [ "_id" ] },
+              "title": { "type": "string","required": [ "_id" ] },
+              "startDate": { "type": "string","required": [ "_id" ] },
+              "endDate": { "type": "string","required": [ "_id" ] },
+              "status": { "type": "string","required": [ "_id" ] },
+              "assignedTo":{ "type":"array", "items":{ "type": "string" } },
+              "subTasks":{
+                "type":"array",
+                "items":{
+                  "type":"object",
+                  "properties":{
+                    "_id": { "type": "string","required": [ "_id" ] },
+                    "assignedTo":{ "type":"array", "items":{ "type": "string" } },
+                    "title": { "type": "string","required": [ "_id" ] },
+                    "startDate": { "type": "string","required": [ "_id" ] },
+                    "endDate": { "type": "string","required": [ "_id" ] },
+                    "status": { "type": "string","required": [ "_id" ] }
+                  }
+                }
+              }
+            }
+          }
+         
+
+        }
+        
+     
+      }
+    },
+    "taskSync": {
+      "required": [
+        ""
+      ],
+      "properties": {
+            "_id": {
+              "type": "string",
+              "required": [
+                "_id"
+              ]
+            },
+            "tasks":{
+              "type":"object",
+              "properties":{
+                "_id":{
+                  "type":"string",
+                  "required": [
+                    "_id"
+                  ]
+                },
+                "title":{
+                  "type":"string"
+                },
+                "startDate":{
+                  "type":"string"
+
+                },
+                "endDate":{
+                  "type":"string"
+
+                },
+                "status":{
+                  "type":"string"
+
+                },
+                "lastSync":{
+                  "type":"string"
+
+                },
+                "isDeleted":{
+                  "type":"boolean",
+                  "default":false,  
+                  "required": [
+                    "isDeleted"
+                  ]
+                },
+                "subTasks":{
+                  "type":"object",
+                  "properties":{
+                    "_id":{
+                      "type":"string",
+                      "required": [
+                        "_id"
+                      ]
+                    },
+                    "assignedTo":{
+                      "type": "array",
+                      "items":{
+                        "type": "string"
+                      },
+                      "required": [
+                        "assignedTo"
+                      ]
+                    },
+                    "title":{
+                      "type":"string",
+                      "required": [
+                        "title"
+                      ]
+                    },
+                    "startDate":{
+                      "type":"string",
+                      "required": [
+                        "startDate"
+                      ]
+                    },
+                    "endDate":{
+                      "type":"string",
+                      "required": [
+                        "endDate"
+                      ]
+                    },
+                    "status":{
+                      "type":"string",
+                      "required": [
+                        "status"
+                      ]
+                    },
+                    "lastSync":{
+                      "type":"string"
+                    }
+
+                }
+              }
+               
+              }
+             
+            }
+          }       
+    },
+    "SubTaskSync":{
+      "required": [
+        ""
+      ],
+      "properties": {
+        "taskId": {
+          "type": "string",
+          "required": [
+            "taskId"
+          ]
+        },
+
+        "subTasks":{
+          "type":"array",
+          "items":{
+            "type":"object",
+              "properties":{
+                "isNew":{
+                  "type":"boolean"
+                },
+                "_id":{
+                  "type":"string"
+
+                },
+                "assignedTo":{
+                  "type": "array",
+                  "items":{
+                    "type": "string"
+                  },
+                  "required": [
+                    "assignedTo"
+                  ]
+                },
+                "title":{
+                  "type":"string",
+                  "required": [
+                    "title"
+                  ]
+                },
+                "startDate":{
+                  "type":"string",
+                  "required": [
+                    "startDate"
+                  ]
+                },
+                "endDate":{
+                  "type":"string",
+                  "required": [
+                    "endDate"
+                  ]
+                },
+                
+                "status":{
+                  "type":"string",
+                  "required": [
+                    "status"
+                  ]
+                },
+                "isDeleted":{
+                  "type":"boolean",
+                  "default":false,  
+                  "required": [
+                    "isDeleted"
+                  ]
+                },
+                "lastSync":{
+                  "type":"string"
+                }
+
+              }
+          }
+        }
+         
+      }      
+
+    },
+    "monthReport":{
+      "required": [
+        ""
+      ],
+      "properties": {
+        "message":{
+          "type":"string",
+          "default":"Report Generated Succesfully"
+        },
+        "data" :{
+          "type":"object",
+          "properties":{
+            "pending": {
+              "type": "string"
+            },
+            "completed":{
+              "type": "string"
+            }
+          }
+
+        }
+       
+      }
+
+    },
+    "chartReport":{
+      "required": [
+        ""
+      ],
+      "properties": {
+        "message":{
+          "type":"string",
+          "default":"Chart details generated succesfully"
+        },
+        "data": {
+              "type": "array",
+              "items":{ "type": "object","properties":{
+
+                "title":{
+                  "type":"string"
+                },
+                "series":{
+                  "type": "array",
+                  "items":{ "type": "object","properties":{
+                    "name":{
+                      "type":"string"
+                    },
+                    "data":{
+                      "type":"array",
+                      "items": { "type": "object","properties":{
+                        
+                      }
+                    }
+                    }
+                  }
+                }
+
+              },
+              "xAxis":{
+                "type":"object",
+                "properties":{
+                  
+                }
+              }
+              }
+             }
+          }
+      }
+    }
+   }
+}
