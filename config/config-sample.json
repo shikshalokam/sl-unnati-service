@@ -1,0 +1,35 @@
+﻿{
+    "HOST": "http://localhost",
+    "PORT": "8082",
+    "DB_URL": "",
+    "appName":"unnati",
+    "": "KeyCloak Credentials",
+    "sunbird_keycloak_auth_server_url": "",
+    "sunbird_keycloak_realm": "",
+    "sunbird_keycloak_client_id": "",
+    "sunbird_keycloak_public": true,
+    "sunbird_cache_store": "memory",
+    "sunbird_cache_ttl": 1800,
+    "x_channel_id": "",
+    "userExtensionEntity": "",
+    "dhiti_config": {
+        "api_base_url": "",
+        "observationsByEntity": "",
+        "instanceLevelPdfReports": "",
+        "getProjectPdf":""
+    },
+    "Kafka":{
+        "host":"",
+        "notification_topic":""
+    },
+    "cronConfiguration":{
+        "pendingTaskPriorDays":[14,7,3],
+        "pendingTaskScheduleTime":"1 55 10 * * *",
+        "pendingProjectPriorDays":[14,7,3],
+        "unFinishedProjectScheduleTime":"59 54 10 * * *",
+        "subTaskPendingScheduleTime":"1 56 10 * * *",
+        "pendingSubTaskPriorDays":[14,7,3]
+        
+    },
+    "myProjectMapingProgramId":"5d159cc31a887d21e7e54a9b"
+}
