@@ -601,7 +601,6 @@ function createTemplateAndPrject(req) {
                         }));
                     } else {
                         resolve({ status: "success", response: projectInfo });
-                       
                     }
 
                     }else{
@@ -687,6 +686,3 @@ function updateProjectFromTemplateReferance(req) {
         }
     });
 }
-
-
-
