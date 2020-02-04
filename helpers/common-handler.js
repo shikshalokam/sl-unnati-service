@@ -585,7 +585,7 @@ function createTemplateAndPrject(req) {
                     if(projectInfo && projectInfo.status=="success"){
                         let userInfo = await userEntities.userEntities(req);
 
-                    if (userInfo.data) {
+                    if (userInfo && userInfo.data && userInfo.data.status && userInfo.data.status ==200) {
                         let userEntityList = JSON.parse(userInfo.data)
                         await Promise.all(userEntityList.result.map(async function (ele) {
                             var obj = {};
@@ -600,7 +600,7 @@ function createTemplateAndPrject(req) {
                             resolve({ status: "success", response: projectInfo });
                         }));
                     } else {
-                        reject({ status: "failed", message: userInfo });
+                        resolve({ status: "success", response: projectInfo });
                     }
 
                     }else{
@@ -653,7 +653,7 @@ function updateProjectFromTemplateReferance(req) {
 
                 if(projectInfo.status && projectInfo.status=="success" ){
                     let userInfo = await userEntities.userEntities(req);
-                if (userInfo.data) {
+                if (userInfo && userInfo.data && userInfo.data.status && userInfo.data.status==200) {
                     let userEntityList = JSON.parse(userInfo.data)
                     await Promise.all(userEntityList.result.map(async function (ele) {
                         var obj = {};
@@ -667,7 +667,7 @@ function updateProjectFromTemplateReferance(req) {
                         resolve({ status: "success", response: projectInfo });
                     }));
                 } else {
-                    reject({ status: "failed", message: userInfo });
+                    resolve({ status: "success", response: projectInfo });
                 }
                 }else{
                     // console.log("errror ----------");
@@ -681,11 +681,8 @@ function updateProjectFromTemplateReferance(req) {
                 }   
             }
         } catch (Excep) {
-            winston.logger(Excep);
+            winston.error(Excep);
             resolve({status:"failed",message:Excep});
         }
     });
 }
-
-
-
