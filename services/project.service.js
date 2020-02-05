@@ -297,7 +297,7 @@ async function getProjectAndTaskDetails(projectId) {
             // console.log("porgram",projectId);
             if (projectData) {
                 let tasks = [];
-                tasks = await taskModel.find({ 'projectId': projectId }).sort({ _id: 1 });
+                tasks = await taskModel.find({ 'projectId': projectId }).sort({ _id: 1 }).lean();
                 // console.log("tasks",tasks);
                 var response = {
                 };
@@ -1148,6 +1148,25 @@ function getProjectPdf(req) {
             // console.log("req.body.projectId",req.body.projectId)
             let projectData = await getProjectAndTaskDetails(req.body.projectId);
              if (projectData) {
+
+                if(projectData.tasks){
+                    let tasks = [];
+                    // to remove files from object
+                    await Promise.all(
+                         projectData.tasks.map(async list => {
+                             let taskList = {};
+                              taskList = list;
+                              if(taskList.file){
+                                delete taskList.file;
+                              }
+                            if(taskList.imageUrl){
+                                delete taskList.imageUrl;
+                            }
+                             tasks.push(taskList);
+                         })
+                     )
+                     projectData.tasks = tasks;
+                 }
 
                 try {
                     let url = config.dhiti_config.api_base_url + config.dhiti_config.getProjectPdf;
