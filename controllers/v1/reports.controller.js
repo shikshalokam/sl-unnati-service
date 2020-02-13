@@ -7,6 +7,7 @@ var bodyParser = require('body-parser');
 var path = require('path');
 
 var reportServ = require('../../services/reports.service');
+var winston = require('../../config/winston');
 
 
 // routes
@@ -15,6 +16,10 @@ router.get('/getObservationReport',getObservationReport);
 router.get('/getMonthViseReport',getMonthViseReport);
 
 router.get('/getDetailViewReport',getDetailViewReport);
+router.get('/getMonthViseReportPdf',getMonthViseReportPdf);
+router.get('/getDetailViewReportPdf',getDetailViewReportPdf);
+
+router.get('/numberOfProjectsPerUser',numberOfProjectsPerUser);
 // router.post('/check',check);
 
 
@@ -72,5 +77,72 @@ function getDetailViewReport(req, res) {
       console.log("errr",err);
       }
 }
+
+/**
+ * getMonthViseReportPdf is used to generate the pdf file of monthwise and queaterly full report
+ * @param {*} req 
+ * @param {*} res 
+ */
+function getMonthViseReportPdf(req, res) {
+  try{
+    // calling to service method
+    reportServ.getMonthViseReportPdf(req, res)
+    .then(function (result) {
+      res.send(result);
+    }).catch(e => {
+      winston.error("erorr while featching data at getMonthViseReportPdf() in controller file",e);
+      res.status(500).send(e);
+    });
+  }catch(err){
+    winston.error("error occured at getDetailViewReportPdf() in controller file",err);
+    res.status(500).send(err);
+    }
+}
+
+/**
+ * getDetailViewReportPdf is used to generate the pdf file of monthwise and queaterly full report
+ * @param {*} req 
+ * @param {*} res 
+ */
+function getDetailViewReportPdf(req, res) {
+try{
+  // calling to service method
+  reportServ.getDetailViewReportPdf(req, res)
+  .then(function (result) {
+    res.send(result);
+  }).catch(e => {
+    winston.error("erorr while featching data at getDetailViewReportPdf() in controller file",e);
+    res.status(500).send(e);
+  });
+}catch(err){
+  winston.error("error occured at getDetailViewReportPdf() in controller file",err);
+  res.status(500).send(err);
+  }
+}
+
+/**
+ * numberOfProjectsPerUser is used to get the details of number of project created by user
+ * @param {*} req 
+ * @param {*} res 
+ */
+function numberOfProjectsPerUser(req, res) {
+  try{
+    // calling to service method
+    reportServ.numberOfProjectsPerUser(req, res)
+    .then(function (result) {
+      res.send(result);
+    }).catch(e => {
+      winston.error("erorr while featching data at getDetailViewReportPdf() in controller file",e);
+      res.status(500).send(e);
+    });
+  }catch(err){
+    winston.error("error occured at getDetailViewReportPdf() in controller file",err);
+    res.status(500).send(err);
+    }
+  }
+
+
+
+  
 
   

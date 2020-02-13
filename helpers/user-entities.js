@@ -61,8 +61,14 @@ async function userEntities(req) {
                     if (req.query.search) {
                         searchQuery = "&search=" + req.query.search;
                     }
+                    if(!req.query.limit){
+                        req.query.limit =100;
+                    }
+                    if(!req.query.page){
+                        req.query.page = 1
+                    }
                     let url = config.userExtension.base + config.userExtension.userExtensionEntity + req.body.userId + "?entityType=school&limit=" + req.query.limit + "&page=" + req.query.page + searchQuery; // + req.params.term + "/standings";
-                    // console.log("url", url);
+                    console.log("url", url);
                     Request.get({
                         "headers": {
                             'X-Channel-id': config.x_channel_id,
@@ -87,7 +93,7 @@ async function userEntities(req) {
                         }
 
                         let incomingData = JSON.parse(response.body);
-                        console.log("incomingData",incomingData);
+                        console.log("incomingData",response.body);
                         if (incomingData.status == 200) {
 
 
@@ -171,7 +177,7 @@ async function getUserProfile(req) {
                     return reject(obj);
                 }
 
-                // console.log("data",body);
+                console.log("data",url);
                 let incomingData = JSON.parse(response.body);
                 if (incomingData.status == 200) {
 
