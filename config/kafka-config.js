@@ -1,28 +1,49 @@
-var kafka = require('kafka-node');
+/**
+ * name : kafka-config.js
+ * author : Aman Jung Karki
+ * created-date : 13-feb-2020
+ * Description : All kafka configuration data.
+ */
+
+//dependencies
+const kafka = require('kafka-node');
 var config = require('../config/config.json');
-var api = {};
 
+/**
+   * Kafka connection.
+*/
 
+var connect = function() {
 
-var kafka = require('kafka-node'),
-    Producer = kafka.Producer,
-    Consumer = kafka.Consumer,
-    KeyedMessage = kafka.KeyedMessage;
-
-client = new kafka.KafkaClient({ kafkaHost: config.Kafka.host });
-
-producer = new Producer(client),
-    producer.on('ready', function () {
-        console.log("Connected to kafka");    
+    let Producer = kafka.Producer;
+    let KeyedMessage = kafka.KeyedMessage;
+    let client = new kafka.KafkaClient({
+      kafkaHost : config.Kafka.host
     });
 
-producer.on('error', function (err) {
-    console.log("error while connecting to kafka");
-})
+    client.on('error', function(error) {
+      console.log("kafka connection error!");
+    });
 
-module.exports  = { 
-    producer:producer
-}
+    producer = new Producer(client);
+
+    producer.on('ready', function () {
+      console.log("Connected to Kafka");
+    });
+   
+    producer.on('error', function (err) {
+      console.log("kafka producer creation error!");
+    })
+
+    return {
+      kafkaProducer: producer,
+      kafkaKeyedMessage: KeyedMessage
+    };
+
+};
+
+module.exports = connect;
+
 
 
 
