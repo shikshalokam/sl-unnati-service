@@ -9,6 +9,7 @@ var projectV1               = require('./controllers/v1/project.controller');
 var external                = require('./controllers/v1/external.controller');
 var reports                 = require('./controllers/v1/reports.controller');
 var template                = require('./controllers/v1/template.controller');
+var userProfile             = require('./controllers/v1/user-profile.controller');
 
 const swaggerUi             = require('swagger-ui-express');
 const swaggerDocument       = require('./config/swagger.json');
@@ -29,6 +30,8 @@ var notification            = require('./helpers/notifications');
 
 var cronSchedular           = require('./helpers/cron-schedular');
 
+global.kafkaClient = require('./config/kafka-config')();
+require("./helpers/scheduler");
 
 // connection should come from config.
 mongoose.connect(config.DB_URL, { useNewUrlParser: true });
@@ -38,6 +41,7 @@ mongoose.set('useCreateIndex', true);
 
 app.use(bodyParser.json({ limit: "20mb" }));
 app.use(bodyParser.urlencoded({ limit: "20mb", extended: true, parameterLimit: 20000 }));
+
 
 app.use(function (req, res, next) { //allow cross origin requests
     res.setHeader("Access-Control-Allow-Methods", "POST, PUT, OPTIONS, DELETE, GET");
@@ -89,9 +93,7 @@ app.use('/unnati/api/v1/',authenticate,projectV1);
 app.use('/unnati/api/external/',authenticate,external);
 app.use('/unnati/api/v1/reports/',authenticate,reports);
 app.use('/unnati/api/v1/template/',authenticate,template);
-
-
-  
+app.use('/unnati/api/v1/user-profile/',authenticate,userProfile);
 
 var httpServer = http.createServer( app);
 httpServer.listen(port, function () {
