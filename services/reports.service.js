@@ -527,6 +527,14 @@ async function getDetailViewReportPdf(req, res) {
     });
 }
 
+
+/**
+ * monthOrQuarterData func() returns the last month or quarter data of 
+ * specific user
+ *  data pdf
+ * 
+ * @param {*} req
+ */
 async function monthOrQuarterData(req, res) {
     return new Promise(async (resolve, reject) => {
         try {
@@ -604,10 +612,18 @@ async function monthOrQuarterData(req, res) {
     })
 }
 
+/**
+ * numberOfProjectsPerUser func() return the report of number 
+ * of projects created by specific user
+ *  data pdf
+ * 
+ * @param {*} req
+ */
 async function numberOfProjectsPerUser(req, res) {
     return new Promise(async (resolve, reject) => {
         try {
             let userDetails = await projectsModel.aggregate([
+             //   { $match:{ "createdType":"by self" } },
                 {
                     $lookup: {
                         from: "userProjectsTasks",
