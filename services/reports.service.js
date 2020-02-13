@@ -18,6 +18,7 @@ var solutionsModel = require('../models/solutions.js');
 var projectsModel = require('../models/projects.js');
 var taskModel = require('../models/task.js');
 var programsModel = require('../models/programs.js');
+var httpRequest = require('../helpers/http-request')
 
 
 
@@ -34,6 +35,9 @@ api.getReports = getReports;
 api.getObservationReport = getObservationReport;
 api.getMonthViseReport = getMonthViseReport;
 api.getDetailViewReport = getDetailViewReport;
+api.getMonthViseReportPdf = getMonthViseReportPdf;
+api.getDetailViewReportPdf = getDetailViewReportPdf;
+api.numberOfProjectsPerUser = numberOfProjectsPerUser;
 
 module.exports = api;
 
@@ -220,12 +224,21 @@ async function getMonthViseReport(req) {
                 endOf = moment().subtract(0, 'months').endOf('month').format('YYYY-MM-DD');
                 startFrom = moment().subtract(0, 'months').startOf('month').format('YYYY-MM-DD');
                 let currentDate = moment().format('YYYY-MM-DD');
-                if(currentDate!=endOf){
+                if (currentDate != endOf) {
                     endOf = moment().subtract(1, 'months').endOf('month').format('YYYY-MM-DD');
                     startFrom = moment().subtract(1, 'months').startOf('month').format('YYYY-MM-DD');
                 }
             }
+            let count = 0;
             console.log(startFrom, "endOf", endOf);
+
+            let projectCompleted = 0
+            let projectPending = 0;
+            let taskCompleted = 0;
+            let taskPending = 0;
+
+            let taskCount = 0;
+
             if (projectsData.length > 0) {
                 await Promise.all(
                     projectsData.map(async projectList => {
@@ -237,57 +250,80 @@ async function getMonthViseReport(req) {
                         });
                         let isAllTaskCompleted = true;
                         let isPending = true;
+
                         if (taskData.length > 0) {
+
                             await Promise.all(taskData.map(async taskList => {
+                                // let status = (taskList.status).toLowerCase();
+                                // if (taskList.subTasks.length > 0) {
+                                //     await Promise.all(taskList.subTasks.map(async subTasks => {
+                                //         if (subTasks.status) {
+                                //             let subtaskStatus = subTasks.status.toLowerCase();
+                                //             if (subtaskStatus == "completed") {
+                                //                 isAllTaskCompleted = true;
+                                //                 isPending = false;
+                                //             } else {
+                                //                 isPending = false;
+                                //                 isAllTaskCompleted = false;
+                                //             }
+                                //         }
+                                //     }));
+                                // } else {
+                                //     if (status == "completed") {
+                                //         isAllTaskCompleted = true;
+                                //         isPending = false;
+                                //     } else if (status == "not started yet" || status == "not yet started" || status == "Not started") {
+                                //         isPending = false;
+                                //         isAllTaskCompleted = false;
+                                //     } else {
+                                //         isPending = true;
+                                //         isAllTaskCompleted = false;
+                                //     }
+                                // }
+
+                                taskCount = taskCount + 1;
                                 let status = (taskList.status).toLowerCase();
-                                if (taskList.subTasks.length > 0) {
-                                    await Promise.all(taskList.subTasks.map(async subTasks => {
-                                        if (subTasks.status) {
-                                            let subtaskStatus = subTasks.status.toLowerCase();
-                                            if (subtaskStatus == "completed") {
-                                                isAllTaskCompleted = true;
-                                                isPending = false;
-                                            } else if (subtaskStatus == "not started yet" || subtaskStatus == "not yet started") {
-                                                isPending = false;
-                                                isAllTaskCompleted = false;
-                                            } else {
-                                                isPending = true;
-                                                isAllTaskCompleted = false;
-                                            }
-                                        }
-                                    }));
+                                // console.log("status ==", status);
+                                if (status == "completed") {
+                                    taskCompleted = taskCompleted + 1;
                                 } else {
-                                    if (status == "completed") {
-                                        isAllTaskCompleted = true;
-                                        isPending = false;
-                                    } else if (status == "not started yet" || status == "not yet started") {
-                                        isPending = false;
-                                        isAllTaskCompleted = false;
-                                    } else {
-                                        isPending = true;
-                                        isAllTaskCompleted = false;
-                                    }
+                                    taskPending = taskPending + 1;
                                 }
+
+
                             }
                             ));
-                        } else {
-                            isAllTaskCompleted = false;
-                            isPending = false;
-                        }
-                        if (isAllTaskCompleted) {
-                            completed = completed + 1;
-                        }
-                        if (isPending) {
-                            pending = pending + 1;
+
+
+                            let projectStatus = projectList.status.toLowerCase();
+                            console.log("project completed", projectList.status);
+
+                            if (projectStatus == "completed") {
+                                projectCompleted = projectCompleted + 1;
+                            } else {
+                                projectPending = projectPending + 1;
+                            }
+
                         }
                     })
                 );
-                resolve({ status: "success", data: { "pending": pending, "completed": completed, endMonth: moment(endOf).format('MMMM'), startMonth: moment(startFrom).format('MMMM') }, message: "Report Generated Succesfully " });
+
+                let data = {
+                    projectsCompleted: projectCompleted,
+                    projectsPending: projectPending,
+                    tasksCompleted: taskCompleted,
+                    tasksPending: taskPending,
+                    endMonth: moment(endOf).format('MMMM'),
+                    startMonth: moment(startFrom).format('MMMM')
+                }
+
+                console.log("count", taskCount);
+                resolve({ status: "success", data: data, message: "Report Generated Succesfully " });
             } else {
                 reject({ status: "failed", "message": "no data found", data: [] })
             }
         } catch (ex) {
-            winston.error({ "error":ex,"where":"getMonthViseReport api " } );
+            winston.error({ "error": ex, "where": "getMonthViseReport api " });
             reject({ status: "failed", "message": ex })
         }
     });
@@ -309,7 +345,7 @@ async function getDetailViewReport(req) {
             var startFrom = "";
             // console.log("req.query",req.query);
 
-           
+
 
             if (req.query.reportType == "lastQuarter") {
                 endOf = moment().subtract(1, 'months').endOf('month').format('YYYY-MM-DD');
@@ -318,6 +354,7 @@ async function getDetailViewReport(req) {
                 endOf = moment().subtract(1, 'months').endOf('month').format('YYYY-MM-DD');
                 startFrom = moment().subtract(1, 'months').startOf('month').format('YYYY-MM-DD');
             }
+
 
             // console.log(startFrom,"endOf",projectsData.length);
             if (projectsData.length > 0) {
@@ -408,10 +445,12 @@ async function getDetailViewReport(req) {
                             })
                             )
                             chartObject.push(reponseObj);
-                        } else {
+
                         }
+
                     })
                 )
+                console.log("chartObject", chartObject.length);
                 resolve({ status: "success", "message": "Chart details generated succesfully", data: chartObject })
             } else {
                 reject({ status: "failed", "message": "no data found", data: [] })
@@ -422,4 +461,190 @@ async function getDetailViewReport(req) {
         }
     }
     );
+}
+/**
+ * getMonthViseReportPdf is used to get the complete details of lastmonth or
+ *  quarter data pdf
+ * @param {*} req
+ */
+async function getMonthViseReportPdf(req, res) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            // let reportData = await getMonthViseReport(req, res);
+
+            let data = await monthOrQuarterData(req, res);
+            if (data && data.length > 0) {
+                resolve(data);
+            } else {
+                resolve({ status: "failed", message: "No data Found" });
+            }
+
+        } catch (error) {
+            winston.error("error occured at getMonthViseReportPdf() in report.service.js " + error);
+            reject({ status: "failed", "message": "no data found", data: [] })
+        }
+
+    });
+}
+/**
+ * getDetailViewReportPdf is used to get the full report of lastmonth or quarter
+ *  data pdf
+ * 
+ * @param {*} req
+ */
+async function getDetailViewReportPdf(req, res) {
+    return new Promise(async (resolve, reject) => {
+
+        try {
+            let reportData = await getDetailViewReport(req, res);
+            // resolve(reportData);
+
+            if (reportData && reportData.status && reportData.status == "success") {
+                let headers = {
+                    'x-auth-token': req.headers['x-auth-token'],
+                    'Content-Type': 'application/json'
+                }
+                let url = config.dhiti_config.api_base_url + config.dhiti_config.getProjectPdf;
+                // let url = config.dhiti_config.api_base_url + config.dhiti_config.montlyReportGenerate;
+                let response = await httpRequest.httpsPost(headers, reportData, url);
+
+                if (response) {
+
+                    console.log("response", response);
+                    resolve(response);
+                } else {
+                    resolve(response)
+                }
+            } else {
+                reject();
+            }
+
+        } catch (error) {
+            winston.error("error occured at getDetailViewReportPdf() in report.service.js " + error);
+            reject({ status: "failed", "message": "no data found", data: [] })
+        }
+
+    });
+}
+
+async function monthOrQuarterData(req, res) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let projectsData = await projectsModel.find({
+                userId: req.body.userId
+            }).lean();
+
+
+            if (req.query.reportType = "lastQuarter") {
+                endOf = moment().subtract(1, 'months').endOf('month').format('YYYY-MM-DD');
+                startFrom = moment().subtract(3, 'months').startOf('month').format('YYYY-MM-DD');
+            } else {
+                endOf = moment().subtract(0, 'months').endOf('month').format('YYYY-MM-DD');
+                startFrom = moment().subtract(0, 'months').startOf('month').format('YYYY-MM-DD');
+                let currentDate = moment().format('YYYY-MM-DD');
+                if (currentDate != endOf) {
+                    endOf = moment().subtract(1, 'months').endOf('month').format('YYYY-MM-DD');
+                    startFrom = moment().subtract(1, 'months').startOf('month').format('YYYY-MM-DD');
+                }
+            }
+
+
+            // let programsData = await projectsModel.aggregate([
+            //     { $match: { "userId": req.body.userId } },
+
+            //     // { "$unwind": "$projects" },
+            //     {
+            //         $lookup: {
+            //             from: "userProjectsTasks",
+            //             localField: "_id",
+            //             foreignField: "projectId",
+            //             as: "taskList"
+
+            //         }
+            //     },
+            //       { "$unwind": "$taskList" },
+            //     { $match: { $or: [
+            //         { "taskList.lastSync": { $gte: startFrom, $lte: endOf } },
+            //         { "taskList.subTasks.lastSync": { $gte: startFrom, $lte: endOf } }
+            //             ]
+            //         }
+            //     }
+            // ]);
+
+            let ArrayOfProjects = [];
+            if (projectsData.length > 0) {
+                await Promise.all(
+                    projectsData.map(async projectList => {
+                        let taskData = await taskModel.find({
+                            projectId: projectList._id, $or: [
+                                { lastSync: { $gte: startFrom, $lte: endOf } },
+                                { "subTasks.lastSync": { $gte: startFrom, $lte: endOf } }
+                            ]
+                        }).lean();
+                        if (taskData.length > 0) {
+
+                            await Promise.all(taskData.map(async function (taskList, index) {
+                                if (taskData[index].file) {
+                                    delete taskData[index].file;
+                                }
+                                if (taskData[index].imageUrl) {
+                                    delete taskData[index].imageUrl;
+                                }
+                                projectList.tasks = taskData;
+                                ArrayOfProjects.push(projectList);
+                            }));
+                        }
+                    }));
+            }
+            resolve(ArrayOfProjects);
+        } catch (error) {
+            winston.error("error while gettting data for last month or quarter " + error)
+            reject(error);
+        }
+    })
+}
+
+async function numberOfProjectsPerUser(req, res) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let userDetails = await projectsModel.aggregate([
+                {
+                    $lookup: {
+                        from: "userProjectsTasks",
+                        localField: "_id",
+                        foreignField: "projectId",
+                        as: "taskList"
+
+                    }
+                },
+                {
+                    $group: {
+                        _id: { "userId": "$userId" },
+                        count: { $sum: 1 }
+                    }
+                }
+            ]);
+            let headers = {
+                'X-authenticated-user-token': req.headers['x-auth-token'],
+            }
+            let url = config.kendra_config.base + config.kendra_config.getProfile;
+            await Promise.all(userDetails.map(async function (item, index) {
+
+                url = url + '/' + item._id.userId;
+                let data = await httpRequest.httpsGet(headers, url);
+                if (data && data !== "Not Found") {
+                    data = JSON.parse(data);
+                    if (data.result && data.result.firstName) {
+                        lastName = data.result.lastName ? data.result.lastName : "";
+                        let name = data.result.firstName + " " + lastName;
+                        userDetails[index]["_id"].username = name;
+                    }
+                }
+            }));
+            resolve({ status: "success", data: userDetails });
+        } catch (error) {
+            winston.error(error);
+            reject({ status: "failed", message: error });
+        }
+    });
 }

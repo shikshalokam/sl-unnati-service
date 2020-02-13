@@ -353,7 +353,7 @@ async function syncProject(req) {
     }
     // Get hardcoded value from .env file.
 
-    if (req.body && req.body.createdType && req.body.createdType == "by reference") {
+    if (req.body && req.body.createdType && req.body.createdType == config.createdFromReferance) {
 
         async function updateProjectWithReferanceTemplate() {
             req.createdBy = req.body.userId;
@@ -390,7 +390,7 @@ async function syncProject(req) {
         updateProjectWithReferanceTemplate()
 
     }
-    else if (req.body && req.body.createdType && req.body.createdType == "by self") {
+    else if (req.body && req.body.createdType && req.body.createdType == config.createdSelf) {
         // create template for project if only createdType is by self
         async function createTemplate() {
 
