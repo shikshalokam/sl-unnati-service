@@ -31,5 +31,11 @@
         "pendingSubTaskPriorDays":[14,7,3]
         
     },
-    "myProjectMapingProgramId":"5d159cc31a887d21e7e54a9b"
+    "myProjectMapingProgramId":"5d159cc31a887d21e7e54a9b",
+    "createdSelf":"by self",
+    "createdFromReferance": "by reference",
+    "kendra_config":{
+        "base":"",
+        "getProfile":""
+    }
 }
