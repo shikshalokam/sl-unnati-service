@@ -555,7 +555,7 @@ function createTemplateAndPrject(req) {
         try {
             // syncData.tasks = req.body.tasks;
             req.body.createdBy = req.body.userId;
-            req.body.creationType = "by self";
+            req.body.creationType = config.createdSelf;
 
             
             let data = await createImprovementTemplate(req.body);
