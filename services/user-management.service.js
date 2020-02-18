@@ -8,6 +8,7 @@
 // Dependencies
 var request = require('request');
 var config = require('../config/config.json');
+var winston = require('../config/winston');
 
  /**
       * All user profile lists.
@@ -28,7 +29,7 @@ function userProfileList() {
 
             const _userManagementCallBack = function (err, response) {
                 if (err) {
-                    logger.error("Failed to connect to user management service.");
+                    winston.error("Failed to connect to user management service.");
                 } else {
                     let userManagementData = JSON.parse(response.body);
                     return resolve(userManagementData);
