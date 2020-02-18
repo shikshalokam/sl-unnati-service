@@ -1,4 +1,6 @@
 var mongoose = require('mongoose');
+const moment = require('moment-timezone');
+const dateFormat = moment.tz(Date.now(), "Asia/kolkata");
 // mongoose.connect('mongodb://localhost:27017/myapp', { useNewUrlParser: true });
 
 var Schema = mongoose.Schema,ObjectId = Schema.ObjectId;
@@ -27,6 +29,8 @@ var projectModel = mongoose.model('userProjects',new mongoose.Schema({
 	"category":Array,
 	"createdType":String,
 	"createdBy":ObjectId,
-	"isStarted":Boolean
+	"isStarted":Boolean,
+	"startDate":{ type:Date, default:dateFormat },
+	"endDate":{ type:Date, default:dateFormat }
 },{collection: 'userProjects'} ) );
 module.exports = projectModel;
