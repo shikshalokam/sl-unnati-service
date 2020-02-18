@@ -322,6 +322,7 @@ async function getProjectAndTaskDetails(projectId) {
 
 async function syncProject(req) {
 
+    console.log("sync api - userId : "+req.body.userId,req.body);
     var deferred = Q.defer();
     var syncData = {
         // "id": "String",
@@ -338,7 +339,9 @@ async function syncProject(req) {
         "lastSync": moment().format(),
         "primaryAudience": req.body.primaryAudience,
         "concepts": req.body.concepts,
-        "keywords": req.body.keywords
+        "keywords": req.body.keywords,
+        "startDate":req.body.startDate ? req.body.startDate : "",
+        'endDate':req.body.endDate ? req.body.endDate : ""
     };
 
     //map the project to template only if createdType is by referance
@@ -474,6 +477,11 @@ async function syncProject(req) {
                                 taskData[eachElement] = element[eachElement];
                             }
                         });
+                        if(!element.isDeleted){
+                            // taskData['isDeleted'] =false;
+                        }else{
+                            taskData['isDeleted'] = element.isDeleted;
+                        }
 
 
                         taskModel.findOneAndUpdate({ '_id': element._id }, taskData,{new: true}, (function (err, taskUpdateDataInfo) {

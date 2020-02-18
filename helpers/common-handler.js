@@ -327,6 +327,13 @@ function mapSolutionsToProgram(body) {
                     templateData['createdType'] = body.createdType;
                 }
 
+                if(body.startDate){
+                    templateData['startDate'] = body.startDate;
+                }
+                if(body.endDate){
+                    templateData['endDate'] = body.endDate;
+                }
+
                 if (templateData) {
                     var solutionSchema = new solutionsModel({
 
@@ -478,7 +485,9 @@ function projectCreateAndSolutionMapping(obj) {
                         "suggestedProject": docInfo.suggestedProject ? docInfo.suggestedProject : "",
                         "category": docInfo.category ? docInfo.category : "" ,
                         "createdType":docInfo.createdType ? docInfo.createdType:"",
-                        "isStarted":docInfo.isStarted ? docInfo.isStarted: false
+                        "isStarted":docInfo.isStarted ? docInfo.isStarted: false,
+                        "startDate":docInfo.startDate ? docInfo.startDate : "",
+                        "endDate": docInfo.endDate ? docInfo.endDate : ""
                     }
 
                     var projectIDs = [];
@@ -556,6 +565,8 @@ function createTemplateAndPrject(req) {
             // syncData.tasks = req.body.tasks;
             req.body.createdBy = req.body.userId;
             req.body.creationType = "by self";
+            req.body.startDate = req.body.startDate;
+            req.body.endDate = req.body.endDate;
 
             
             let data = await createImprovementTemplate(req.body);
@@ -564,7 +575,9 @@ function createTemplateAndPrject(req) {
                     programId: config.myProjectMapingProgramId,
                     impTemplateId: data._id,
                     isStarted:req.body.isStarted ? req.body.isStarted:false,
-                    createdType: req.body.createdType ? req.body.createdType : ""
+                    createdType: req.body.createdType ? req.body.createdType : "",
+                    startDate:req.body.startDate ? req.body.startDate : "",
+                    endDate:req.body.endDate ? req.body.endDate : ""
                 }
 
                 console.log("obj",obj)
@@ -583,25 +596,28 @@ function createTemplateAndPrject(req) {
                     let projectInfo = await projectCreateAndSolutionMapping(json);
 
                     if(projectInfo && projectInfo.status=="success"){
-                        let userInfo = await userEntities.userEntities(req);
 
-                    if (userInfo && userInfo.data && userInfo.data.status && userInfo.data.status ==200) {
-                        let userEntityList = JSON.parse(userInfo.data)
-                        await Promise.all(userEntityList.result.map(async function (ele) {
-                            var obj = {};
-                            // obj.name = ele.metaInformation.name;
-                            obj.entityId = ele._id;
-                            let updateAarray = {
-                                entityType: ele.entityType,
-                                entityId: ele._d
-                            }
-                            let updateData = await projectsModel.findOneAndUpdate({ '_id': mongoose.Types.ObjectId(projectInfo.projectIds[0]) }, updateAarray);
-                            console.log("updateData");
-                            resolve({ status: "success", response: projectInfo });
-                        }));
-                    } else {
                         resolve({ status: "success", response: projectInfo });
-                    }
+
+                    //     let userInfo = await userEntities.userEntities(req);
+
+                    // if (userInfo && userInfo.data && userInfo.data.status && userInfo.data.status ==200) {
+                    //     let userEntityList = JSON.parse(userInfo.data)
+                    //     await Promise.all(userEntityList.result.map(async function (ele) {
+                    //         var obj = {};
+                    //         // obj.name = ele.metaInformation.name;
+                    //         obj.entityId = ele._id;
+                    //         let updateAarray = {
+                    //             entityType: ele.entityType,
+                    //             entityId: ele._d
+                    //         }
+                    //         let updateData = await projectsModel.findOneAndUpdate({ '_id': mongoose.Types.ObjectId(projectInfo.projectIds[0]) }, updateAarray);
+                    //         console.log("updateData");
+                    //         resolve({ status: "success", response: projectInfo });
+                    //     }));
+                    // } else {
+                    //     resolve({ status: "success", response: projectInfo });
+                    // }
 
                     }else{
                         reject({ status: "failed", message: projectInfo });   
@@ -652,23 +668,26 @@ function updateProjectFromTemplateReferance(req) {
                 let projectInfo = await projectCreateAndSolutionMapping(json);
 
                 if(projectInfo.status && projectInfo.status=="success" ){
-                    let userInfo = await userEntities.userEntities(req);
-                if (userInfo && userInfo.data && userInfo.data.status && userInfo.data.status==200) {
-                    let userEntityList = JSON.parse(userInfo.data)
-                    await Promise.all(userEntityList.result.map(async function (ele) {
-                        var obj = {};
-                        // obj.name = ele.metaInformation.name;
-                        obj.entityId = ele._id;
-                        let updateAarray = {
-                            entityType: ele.entityType,
-                            entityId: ele._d
-                        }
-                        let updateData = await projectsModel.findOneAndUpdate({ '_id': mongoose.Types.ObjectId(projectInfo.projectIds[0]) }, updateAarray);
-                        resolve({ status: "success", response: projectInfo });
-                    }));
-                } else {
+
                     resolve({ status: "success", response: projectInfo });
-                }
+                    
+                //     let userInfo = await userEntities.userEntities(req);
+                // if (userInfo && userInfo.data && userInfo.data.status && userInfo.data.status==200) {
+                //     let userEntityList = JSON.parse(userInfo.data)
+                //     await Promise.all(userEntityList.result.map(async function (ele) {
+                //         var obj = {};
+                //         // obj.name = ele.metaInformation.name;
+                //         obj.entityId = ele._id;
+                //         let updateAarray = {
+                //             entityType: ele.entityType,
+                //             entityId: ele._d
+                //         }
+                //         let updateData = await projectsModel.findOneAndUpdate({ '_id': mongoose.Types.ObjectId(projectInfo.projectIds[0]) }, updateAarray);
+                //         resolve({ status: "success", response: projectInfo });
+                //     }));
+                // } else {
+                //     resolve({ status: "success", response: projectInfo });
+                // }
                 }else{
                     // console.log("errror ----------");
                     reject({ status: "failed", message: projectInfo });
