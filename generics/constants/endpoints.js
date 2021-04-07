@@ -43,5 +43,6 @@ module.exports = {
     SOLUTION_BASED_ON_ROLE_LOCATION : "api/v1/solutions/forUserRoleAndLocation",
     SOLUTION_DETAILS_BASED_ON_ROLE_LOCATION : "api/v1/solutions/detailsBasedOnRoleAndLocation",
     LIST_ENTITIES_BY_LOCATION_IDS : "api/v1/entities/listByLocationIds",
-    CREATE_IMPROVEMENT_PROJECT_SOLUTION : "api/v1/solutions/create"
+    CREATE_IMPROVEMENT_PROJECT_SOLUTION : "api/v1/solutions/create",
+    PROJECT_AND_TASK_REPORT : "api/v1/improvement-project/projectAndTaskReport"
 };

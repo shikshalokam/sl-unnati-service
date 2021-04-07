@@ -328,19 +328,24 @@ module.exports = class ReportsHelper {
         return new Promise(async (resolve, reject) => {
             try {
 
-                let query = {};
+                let query = {
+                    "userId": userId,
+                    programId : {
+                        $exists : true
+                    }
+                };
 
                 if(entityId != "" && UTILS.isValidMongoId(entityId)) {
-                    query = {
-                        "entityId": ObjectId(entityId),
+                    query.entityId = ObjectId(entityId);
+                } 
+                
+                if (userRole != "") {
+                    query.userRole = {
+                        $in : [
+                            "",
+                            userRole
+                        ]
                     }
-                } else if (userRole != "" && userId != "") {
-                    query = {
-                        "userId": userId,
-                        "userRole": userRole
-                    }
-                } else {
-                    throw new Error("Missing user role or entity id.")
                 }
 
 
@@ -349,12 +354,19 @@ module.exports = class ReportsHelper {
                     searchQuery = [{ "programInformation.name": new RegExp(search, 'i') }];
                 }
 
+                let groupBy =  {
+                        _id: '$programId',
+                        "programName": { '$first': '$programInformation.name' },
+                        programId: { '$first': '$programId' }
+                }
+
                 const projectDocuments = await userProjectsHelper.projects(
                     query,
                     pageSize,
                     pageNo,
                     searchQuery,
-                    ["programInformation.name","programId", "userId"]
+                    ["programInformation","programId", "userId"],
+                    groupBy
                 );
 
                 if (projectDocuments.data && projectDocuments.data.count && projectDocuments.data.count == 0) {
@@ -368,14 +380,10 @@ module.exports = class ReportsHelper {
                 let projectDetails = projectDocuments.data.data;
                 for (let index = 0; index < projectDetails.length; index++) {
                     programs.push({
-                        name: projectDetails[index].programInformation.name,
+                        name: projectDetails[index].programName,
                         _id: projectDetails[index].programId.toString()
                     });
                 }
-
-                programs = _.uniqBy(programs, function (program) {
-                    return program.id;
-                });
 
                 return resolve({
                     success: true,

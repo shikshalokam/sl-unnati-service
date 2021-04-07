@@ -112,7 +112,7 @@ function valueParser(dataToBeParsed) {
    */
   
   function convertStringToBoolean(stringData) {
-    let stringToBoolean = (stringData === "TRUE" || stringData === "true");
+    let stringToBoolean = (stringData === "TRUE" || stringData === "true" || stringData === true );
     return stringToBoolean;
   }
 

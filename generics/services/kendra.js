@@ -812,7 +812,7 @@ const solutionBasedOnRoleAndLocation = function ( token,bodyData,typeAndSubType,
     return new Promise(async (resolve, reject) => {
         try {
             
-            const url = 
+            let url = 
             KENDRA_URL + CONSTANTS.endpoints.SOLUTION_BASED_ON_ROLE_LOCATION+ "?type=" + typeAndSubType + "&subType=" + typeAndSubType;
 
             if( searchText !== "" ) {

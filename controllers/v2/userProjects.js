@@ -29,11 +29,11 @@ module.exports = class UserProjects extends v1UserProjects {
      */
 
     /**
-    * @api {post} /improvement-project/api/v2/userProjects/details/:projectId?programId=:programId&solutionId=:solutionId
+    * @api {post} /improvement-project/api/v2/userProjects/details/:projectId?programId=:programId&solutionId=:solutionId&templateId=:templateId
     * Project Details.
     * @apiVersion 2.0.0
     * @apiGroup User Projects
-    * @apiSampleRequest /improvement-project/api/v2/userProjects/details/5f731631e8d7cd3b88ac0659?programId=5f4e538bdf6dd17bab708173&solutionId=5f8688e7d7f86f040b77f460
+    * @apiSampleRequest /improvement-project/api/v2/userProjects/details/5f731631e8d7cd3b88ac0659?programId=5f4e538bdf6dd17bab708173&solutionId=5f8688e7d7f86f040b77f460&templateId=IDEAIMP4
     * @apiParamExample {json} Request:
     {
         "role" : "HM",
@@ -145,7 +145,8 @@ module.exports = class UserProjects extends v1UserProjects {
                     req.headers.appname ? req.headers.appname : "",
                     req.headers["x-app-ver"] ? 
                     req.headers["x-app-ver"] : 
-                    req.headers.appversion ? req.headers.appversion : ""
+                    req.headers.appversion ? req.headers.appversion : "",
+                    req.query.templateId
                 );
 
                 projectDetails.result = projectDetails.data;

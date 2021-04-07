@@ -102,7 +102,58 @@ const entityReport = function (token,input) {
   })
 }
 
+
+/**
+  * To get project and task pdf report
+  * @function
+  * @name projectAndTaskReport
+  * @param {String} token - user token for verification 
+  * @param {String} input - input request body
+  * @param {Boolean} projectPdf - project pdf report true/false
+  * @returns {JSON} - consist of pdf url
+*/
+
+const projectAndTaskReport = function (token, input, projectPdf) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const url = 
+            process.env.DHITI_SERIVCE_HOST + 
+            process.env.DHITI_SERIVCE_BASE_URL +
+            CONSTANTS.endpoints.PROJECT_AND_TASK_REPORT + "?projectPdf=" + projectPdf;
+          
+            let options = {
+                headers : {
+                    "internal-access-token": process.env.INTERNAL_ACCESS_TOKEN,
+                    "content-type": "application/json",
+                    "x-auth-token": token
+                },
+                json : input
+            };
+
+            request.post(url,options,dhitiCallback);
+
+            function dhitiCallback(err, data) {
+
+                let result = {
+                    success : true
+                };
+
+                if (err) {
+                    result.success = false;
+                } else {
+                    result["data"] = data.body;
+                }
+                return resolve(result);
+            }
+
+        } catch (error) {
+            return reject(error);
+        }
+    })
+}
+
 module.exports = {
     viewFullReport: viewFullReport,
-    entityReport:entityReport
+    entityReport:entityReport,
+    projectAndTaskReport: projectAndTaskReport
 };

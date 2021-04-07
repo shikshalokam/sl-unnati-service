@@ -110,6 +110,12 @@ module.exports = {
             index : true
         },
         isAPrivateProgram : Boolean,
-        appInformation : Object
+        appInformation : Object,
+        userRoleInformtion : Object,
+        hasAcceptedTAndC : {
+            type : Boolean,
+            default : false
+        },
+        referenceFrom : String
     }
 };

@@ -1231,6 +1231,12 @@ module.exports = class UserProjects extends Abstract {
     “lastDownloadedAt” : "2020-09-29T09:08:41.667Z",
     "payload": {
         "_id": "289d9558-b98f-41cf-81d3-92486f114a51"
+    },
+    "profileInformation" : {
+        "role" : "HM",
+   		"state" : "236f5cff-c9af-4366-b0b6-253a1789766a",
+        "district" : "1dcbc362-ec4c-4559-9081-e0c2864c2931",
+        "school" : "c5726207-4f9f-4f45-91f1-3e9e8e84d824"
     }}
     * @apiParamExample {json} Response:
     * {
@@ -1272,6 +1278,120 @@ module.exports = class UserProjects extends Abstract {
                 createdProject.result = createdProject.data;
 
                 return resolve(createdProject);
+
+            } catch (error) {
+                return reject({
+                    status: error.status || HTTP_STATUS_CODE.internal_server_error.status,
+                    message: error.message || HTTP_STATUS_CODE.internal_server_error.message,
+                    errorObject: error
+                });
+            }
+        })
+    }
+
+      /**
+    * @api {get} /improvement-project/api/v1/userProjects/userAssigned?page=:page&limit=:limit&search=:search&filter=:assignedToMe
+    * List of user assigned project.
+    * @apiVersion 1.0.0
+    * @apiGroup User Projects
+    * @apiSampleRequest /improvement-project/api/v1/userProjects/userAssigned?page=1&limit=10
+    * @apiParamExample {json} Response:
+    * {
+    "message": "User project fetched successfully",
+    "status": 200,
+    "result": {
+        "data": [
+            {
+                "_id": "6049c282348d1b060c6454b7",
+                "solutionId": "6049c277f026c305dd471769",
+                "programId": "6049c275f026c305dd471768",
+                "name": "TEST TITLE",
+                "programName": "NEW",
+                "externalId": "01c04166-a65e-4e92-a87b-a9e4194e771d-1615446645973",
+                "type": "improvementProject"
+            }
+        ],
+        "count": 1
+    }}
+
+    /**
+      * List of user assigned projects.
+      * @method
+      * @name userAssigned
+      * @param {Object} req - request data.
+      * @returns {JSON} List of user assigned projects.
+     */
+    
+     async userAssigned(req) {
+        return new Promise(async (resolve, reject) => {
+            try {
+
+                let projects = await userProjectsHelper.userAssigned(
+                    req.userDetails.userInformation.userId,
+                    req.pageSize,
+                    req.pageNo,
+                    req.searchText,
+                    req.query.filter
+                );
+
+                projects.result = projects.data;
+                
+                return resolve(projects);
+            } catch (error) {
+                    return reject({
+                        status: error.status || HTTP_STATUS_CODE.internal_server_error.status,
+                        message: error.message || HTTP_STATUS_CODE.internal_server_error.message,
+                        errorObject: error
+                    });
+                }
+            })
+    }
+
+     /**
+    * @api {get} /improvement-project/api/v1/userProjects/share/:projectId?tasks=:taskId1,:taskId2
+    * Share project and task pdf report.
+    * @apiVersion 1.0.0
+    * @apiGroup User Projects
+    * @apiSampleRequest /improvement-project/api/v1/userProjects/share/6065ced7e9259b7f0b1f5d66?tasks=4d074de7-7059-4d99-9da9-452b0d32e081
+     * @apiParamExample {json} Response:
+    * {
+    * "message": "Report generated succesfully",
+    * "status": 200,
+    * "result" : {
+    *   "data" : {
+    *      "downloadUrl": "http://localhost:4700/dhiti/api/v1/observations/pdfReportsUrl?id=dG1wLzVhNzZjMTY5LTA5YjAtNGU3Zi04ZmNhLTg0NDc5ZmI2YTNiNC0tODUyOA=="
+    * }
+    * }
+    * }
+    * @apiUse successBody
+    * @apiUse errorBody
+    */
+
+    /*
+    * Share project and task pdf report.
+      * @method
+      * @name share
+      * @param {Object} req - request data.
+      * @param {String} req.params._id - projectId 
+      * @returns {JSON} Downloadable pdf url.
+     */
+
+    async share(req) {
+        return new Promise(async (resolve, reject) => {
+            try {
+
+                let taskIds = req.query.tasks ? req.query.tasks.split(",") : [];
+
+                let report = await userProjectsHelper.share(
+                    req.params._id,
+                    taskIds,
+                    req.userDetails.userToken
+                );
+
+                return resolve({
+                    message: report.message,
+                    result: report.data
+                });
 
             } catch (error) {
                 return reject({
