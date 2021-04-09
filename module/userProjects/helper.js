@@ -2735,10 +2735,17 @@ module.exports = class UserProjectsHelper {
                 if( data.length > 0 ) {
                     data.forEach( projectData => {
                         projectData.name = projectData.title;
-                        projectData.programName = projectData.programInformation.name;
-                        delete projectData.programInformation;
-                        projectData.externalId = projectData.solutionExternalId;
-                        delete projectData.solutionExternalId;
+
+                        if (projectData.programInformation) {
+                            projectData.programName = projectData.programInformation.name;
+                            delete projectData.programInformation;
+                        }
+
+                        if (projectData.solutionExternalId) {
+                            projectData.externalId = projectData.solutionExternalId;
+                            delete projectData.solutionExternalId;
+                        }
+
                         projectData.type = CONSTANTS.common.IMPROVEMENT_PROJECT;
 
                         delete projectData.title;
