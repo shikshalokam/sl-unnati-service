@@ -12,6 +12,9 @@ module.exports = (req) => {
         importProjectTemplate : function () {
             req.checkParams('_id').exists().withMessage("required project template id");
             req.checkQuery('solutionId').exists().withMessage("required solution id");
+        },
+        details : function () {
+            req.checkParams("_id").exists().withMessage("required project template external id");
         }
     }
 

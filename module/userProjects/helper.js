@@ -1833,7 +1833,7 @@ module.exports = class UserProjectsHelper {
                 if (projectTemplateData[0].tasks && projectTemplateData[0].tasks.length > 0) {
 
                     const tasksAndSubTasks =
-                        await projectTemplateTasksHelper.tasksAndSubTasks(
+                        await projectTemplatesHelper.tasksAndSubTasks(
                             projectTemplateData[0]._id
                         );
 
@@ -2319,7 +2319,7 @@ module.exports = class UserProjectsHelper {
                 if (projectTemplateData[0].tasks && projectTemplateData[0].tasks.length > 0) {
 
                     const tasksAndSubTasks =
-                        await projectTemplateTasksHelper.tasksAndSubTasks(
+                        await projectTemplatesHelper.tasksAndSubTasks(
                             projectTemplateData[0]._id
                         );
 

@@ -1024,6 +1024,139 @@ module.exports = class ProjectTemplatesHelper {
         })
     }
 
+      /**
+      * Template details.
+      * @method
+      * @name details
+      * @param {String} templateId - Project template id.
+      * @param {String} userId - logged in user id.
+      * @returns {Array} Project templates data.
+     */
+
+    static details( templateId,userId ) {
+        return new Promise(async (resolve, reject) => {
+            try {
+
+                let templateData = await this.templateDocument({
+                    externalId : templateId 
+                },"all",
+                [
+                    "ratings",
+                    "noOfRatings",
+                    "averageRating",
+                    "parentTemplateId",
+                    "createdFor",
+                    "rootOrganisations",
+                    "userId",
+                    "createdBy",
+                    "updatedBy",
+                    "createdAt",
+                    "updatedAt",
+                    "__v"
+                ]);
+
+                if ( !templateData.length > 0 ) {
+                    throw {
+                        status : HTTP_STATUS_CODE.bad_request.status,
+                        message : CONSTANTS.apiResponses.PROJECT_TEMPLATE_NOT_FOUND
+                    }
+                }
+
+                if (templateData[0].tasks && templateData[0].tasks.length > 0) {
+                    templateData[0].tasks = 
+                    await this.tasksAndSubTasks(templateData[0]._id);
+                }
+
+                let result = await _templateInformation(templateData[0])
+
+                if( !templateData[0].isReusable ) {
+                    
+                    templateData[0].projectId = "";
+
+                    let project = await database.models.projects.findOne({
+                        userId : userId,
+                        projectTemplateId : templateData[0]._id
+                    },{
+                        _id : 1
+                    }).lean();
+
+                    if( project && project._id ) {
+                        templateData[0].projectId = project._id;
+                    }
+                }
+
+                return resolve({
+                    success : false,
+                    data : result.data,
+                    message : CONSTANTS.apiResponses.PROJECT_TEMPLATE_DETAILS_FETCHED
+                });
+                
+            } catch (error) {
+                return reject(error);
+            }
+        })
+    }
+
+     /**
+     * Tasks and sub tasks.
+     * @method
+     * @name tasksAndSubTasks
+     * @param {Array} templateId - Template id.
+     * @returns {Array} Tasks and sub task.
+     */
+    
+      static tasksAndSubTasks(templateId) {
+        return new Promise(async (resolve, reject) => {
+            try {
+
+                const templateDocument = 
+                await this.templateDocument({
+                    status : CONSTANTS.common.PUBLISHED,
+                    _id : templateId
+                },["tasks"]);
+
+                let tasks = [];
+
+                if( templateDocument[0].tasks ) {
+                    
+                    tasks = await database.models.projectTemplateTasks.find({
+                        _id : {
+                            $in : templateDocument[0].tasks
+                        },
+                        parentId : { $exists : false }
+                    },{
+                        "projectTemplateId" : 0,
+                        "__v" : 0,
+                        "projectTemplateExternalId" : 0
+                    }).lean();
+
+                    for( let task = 0 ; task < tasks.length ; task ++ ) {
+
+                        if( tasks[task].children && tasks[task].children.length > 0 ) {
+                            
+                            let subTasks = await database.models.projectTemplateTasks.find({
+                                _id : {
+                                    $in : tasks[task].children
+                                }
+                            },{
+                                "projectTemplateId" : 0,
+                                "__v" : 0,
+                                "projectTemplateExternalId" : 0
+                            }).lean();
+                            
+                            tasks[task].children = subTasks;
+                        }
+                    }
+                }
+
+                return resolve(tasks);
+
+           } catch (error) {
+               return reject(error);
+           }
+       });
+    }
+
 };
 
 /**
@@ -1049,3 +1182,65 @@ function _calculateRating(ratings) {
     } 
 }
 
+/**
+ * Project information.
+ * @method
+ * @name _templateInformation 
+ * @param {Object} project - Project data.
+ * @returns {Object} Project information.
+*/
+
+function _templateInformation(project) {
+
+    return new Promise(async (resolve, reject) => {
+        try {
+
+            if( project.programId ) {
+                    
+                let programs = 
+                await assessmentService.listProgramsBasedOnIds([project.programId]);
+                
+                if( !programs.success ) {
+                    throw {
+                        message : CONSTANTS.apiResponses.PROGRAM_NOT_FOUND,
+                        status : HTTP_STATUS_CODE['bad_request'].status
+                    }
+                }
+
+                project.programInformation = {
+                    programId : project.programId,
+                    programName : programs.data[0].name
+                }
+
+                delete project.programId;
+                delete project.programExternalId;
+            }
+
+            if (project.metaInformation) {
+                Object.keys(project.metaInformation).forEach(projectMetaKey => {
+                    project[projectMetaKey] = project.metaInformation[projectMetaKey];
+                });
+            }
+
+            delete project.metaInformation;
+            delete project.__v;
+
+            project.status =
+            project.status ? project.status : CONSTANTS.common.NOT_STARTED_STATUS;
+
+            return resolve({
+                success: true,
+                data: project
+            });
+
+        } catch (error) {
+            return resolve({
+                message: error.message,
+                success: false,
+                status:
+                    error.status ?
+                        error.status : HTTP_STATUS_CODE['internal_server_error'].status
+            })
+        }
+    })
+}
