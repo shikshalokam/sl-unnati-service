@@ -671,7 +671,7 @@ module.exports = class ProjectTemplates extends Abstract {
                 let projectTemplatesDetails = 
                 await projectTemplatesHelper.details(
                     req.params._id,
-                    req.userDetails.userId
+                    req.userDetails.userInformation.userId
                 );
 
                 projectTemplatesDetails.result = projectTemplatesDetails.data;
