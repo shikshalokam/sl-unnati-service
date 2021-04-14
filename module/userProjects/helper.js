@@ -2571,7 +2571,8 @@ module.exports = class UserProjectsHelper {
                 let projectDocument = [];
 
                 let query = {
-                    _id: projectId
+                    _id: projectId,
+                    isDeleted: false
                 }
 
                 if (!taskIds.length ) {
@@ -2596,7 +2597,7 @@ module.exports = class UserProjectsHelper {
                     projectPdf = false;
                     
                     let aggregateData = [
-                    { "$match": { _id: ObjectId(projectId)} },
+                    { "$match": { _id: ObjectId(projectId), isDeleted: false} },
                     { "$project": {
                         "status": 1, "title": 1, "startDate": 1, "metaInformation.goal": 1, "metaInformation.duration":1,
                         "categories" : 1, "programInformation.name": 1,
