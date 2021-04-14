@@ -2571,7 +2571,8 @@ module.exports = class UserProjectsHelper {
                 let projectDocument = [];
 
                 let query = {
-                    _id: projectId
+                    _id: projectId,
+                    isDeleted: false
                 }
 
                 if (!taskIds.length ) {
@@ -2596,7 +2597,7 @@ module.exports = class UserProjectsHelper {
                     projectPdf = false;
                     
                     let aggregateData = [
-                    { "$match": { _id: ObjectId(projectId)} },
+                    { "$match": { _id: ObjectId(projectId), isDeleted: false} },
                     { "$project": {
                         "status": 1, "title": 1, "startDate": 1, "metaInformation.goal": 1, "metaInformation.duration":1,
                         "categories" : 1, "programInformation.name": 1,
@@ -2627,6 +2628,25 @@ module.exports = class UserProjectsHelper {
                     projectDocument.categories.forEach( category => {
                         projectDocument.category.push(category.name);
                     })
+                }
+
+                let tasks = [];
+                if (projectDocument.tasks.length > 0) {
+                    projectDocument.tasks.forEach( task => {
+                        let subtasks = [];
+                        if (!task.isDeleted) {
+                           if (task.children.length > 0) {
+                               task.children.forEach(children => {
+                                   if (!children.isDeleted) {
+                                       subtasks.push(children);
+                                   }
+                               })
+                           }
+                           task.children = subtasks;
+                           tasks.push(task);
+                        }
+                    })
+                    projectDocument.tasks = tasks;
                 }
 
                 delete projectDocument.categories;
