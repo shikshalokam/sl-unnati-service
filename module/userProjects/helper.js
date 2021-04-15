@@ -2649,6 +2649,25 @@ module.exports = class UserProjectsHelper {
                     projectDocument.tasks = tasks;
                 }
 
+                let tasks = [];
+                if (projectDocument.tasks.length > 0) {
+                    projectDocument.tasks.forEach( task => {
+                        let subtasks = [];
+                        if (!task.isDeleted) {
+                           if (task.children.length > 0) {
+                               task.children.forEach(children => {
+                                   if (!children.isDeleted) {
+                                       subtasks.push(children);
+                                   }
+                               })
+                           }
+                           task.children = subtasks;
+                           tasks.push(task);
+                        }
+                    })
+                    projectDocument.tasks = tasks;
+                }
+
                 delete projectDocument.categories;
                 delete projectDocument.metaInformation;
                 delete projectDocument.programInformation;
