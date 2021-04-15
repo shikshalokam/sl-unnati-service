@@ -2648,7 +2648,7 @@ module.exports = class UserProjectsHelper {
                     })
                     projectDocument.tasks = tasks;
                 }
-                
+
                 delete projectDocument.categories;
                 delete projectDocument.metaInformation;
                 delete projectDocument.programInformation;
