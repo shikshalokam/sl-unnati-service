@@ -116,6 +116,10 @@ module.exports = {
             type : Boolean,
             default : false
         },
-        referenceFrom : String
+        referenceFrom : String,
+        importedProject : {
+            type : Boolean,
+            default : false
+        }
     }
 };

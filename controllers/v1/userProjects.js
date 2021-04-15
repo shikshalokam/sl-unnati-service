@@ -1402,4 +1402,44 @@ module.exports = class UserProjects extends Abstract {
             }
         })
     }
+
+       /**
+    * @api {get} /improvement-project/api/v1/userProjects/importedProjects/:programId
+    * @apiVersion 1.0.0
+    * @apiGroup Lists of User Imported Projects
+    * @apiSampleRequest /improvement-project/api/v1/userProjects/importedProjects/60545d541fc23d6d2d44c0c9
+    * @apiParamExample {json} Response:
+    * @apiUse successBody
+    * @apiUse errorBody
+    */
+
+    /*
+    * List of user imported projects
+    * @method
+    * @name importedProjects
+    * @returns {JSON} List of imported projects.
+     */
+
+    async importedProjects(req) {
+        return new Promise(async (resolve, reject) => {
+            try {
+
+                let importedProjects = await userProjectsHelper.importedProjects(
+                    req.userDetails.userInformation.userId,
+                    req.params._id ? req.params._id : ""
+                );
+
+                importedProjects["result"] = importedProjects["data"];
+
+                return resolve(importedProjects);
+
+            } catch (error) {
+                return reject({
+                    status: error.status || HTTP_STATUS_CODE.internal_server_error.status,
+                    message: error.message || HTTP_STATUS_CODE.internal_server_error.message,
+                    errorObject: error
+                });
+            }
+        })
+    }
 };
