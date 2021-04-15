@@ -622,6 +622,13 @@ module.exports = class ProjectTemplatesHelper {
                     }
                 }
 
+                if( solutionData.data[0].projectTemplateId ) {
+                    throw {
+                        message : CONSTANTS.apiResponses.PROJECT_TEMPLATE_EXISTS_IN_SOLUTION,
+                        status : HTTP_STATUS_CODE['bad_request'].status
+                    }
+                }
+
                 if( 
                     projectTemplateData[0].entityType &&  
                     projectTemplateData[0].entityType !== "" &&
@@ -1068,6 +1075,10 @@ module.exports = class ProjectTemplatesHelper {
                 }
 
                 let result = await _templateInformation(templateData[0])
+
+                if( !result.success ) {
+                    return resolve(result);
+                }
 
                 if( !templateData[0].isReusable ) {
                     
