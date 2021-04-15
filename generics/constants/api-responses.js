@@ -113,5 +113,6 @@ module.exports = {
     "REPORT_GENERATED_SUCCESSFULLY" : "Report generated succesfully",
     "USER_ASSIGNED_PROJECT_FETCHED" : "User project fetched successfully",
     "COULD_NOT_GENERATE_PDF_REPORT": "Could not generate pdf report",
-    "PROJECT_TEMPLATE_DETAILS_FETCHED": "Successfully fetched project template details"
+    "PROJECT_TEMPLATE_DETAILS_FETCHED": "Successfully fetched project template details",
+    "PROJECT_TEMPLATE_EXISTS_IN_SOLUTION" : "Project templates already exists in solution"
 };
