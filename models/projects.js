@@ -116,6 +116,10 @@ module.exports = {
             type : Boolean,
             default : false
         },
-        referenceFrom : String
+        referenceFrom : {
+            type : String,
+            index : true
+        },
+        submissions : Object
     }
 };
