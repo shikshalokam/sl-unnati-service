@@ -2194,6 +2194,10 @@ module.exports = class UserProjectsHelper {
 
                         if( bodyData.referenceFrom ) {
                             projectCreation.data.referenceFrom = bodyData.referenceFrom;
+                            
+                            if( bodyData.submissions ) {
+                                projectCreation.data.submissions = bodyData.submissions;
+                            }
                         }
     
                         if( bodyData.role ) {
@@ -2799,6 +2803,63 @@ module.exports = class UserProjectsHelper {
                     data: data,
                     count: totalCount
                 }
+            });
+
+        } catch (error) {
+            return resolve({
+                success : false,
+                message : error.message,
+                status : 
+                error.status ? 
+                error.status : HTTP_STATUS_CODE['internal_server_error'].status,
+                data : {
+                    description : CONSTANTS.common.PROJECT_DESCRIPTION,
+                    data : [],
+                    count : 0
+                }
+            });
+        }
+    })
+  }
+
+  /**
+    * List of user imported projects.
+    * @method
+    * @name importedProjects 
+    * @param {String} userId - Logged in user id.
+    * @param {String} programId - program id.
+    * @returns {Object}
+   */
+
+   static importedProjects( userId,programId ) {
+    return new Promise(async (resolve, reject) => {
+        try {
+
+            let filterQuery = {
+                userId : userId,
+                referenceFrom : { $exists : true,$eq : CONSTANTS.common.OBSERVATION_REFERENCE_KEY },
+                isDeleted: false
+            };
+
+            if( programId !== "" ) {
+                filterQuery["programId"] = programId;
+            }
+
+            let importedProjects = await this.projectDocument(
+                filterQuery,
+                [
+                    "solutionInformation",
+                    "programInformation",
+                    "title",
+                    "description",
+                    "projectTemplateId"
+                ]
+            );
+            
+            return resolve({
+                success : true,
+                message : CONSTANTS.apiResponses.IMPORTED_PROJECTS_FETCHED,
+                data : importedProjects
             });
 
         } catch (error) {

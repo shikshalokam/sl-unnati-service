@@ -1402,4 +1402,67 @@ module.exports = class UserProjects extends Abstract {
             }
         })
     }
+
+       /**
+    * @api {get} /improvement-project/api/v1/userProjects/importedProjects/:programId
+    * @apiVersion 1.0.0
+    * @apiGroup Lists of User Imported Projects
+    * @apiSampleRequest /improvement-project/api/v1/userProjects/importedProjects/60545d541fc23d6d2d44c0c9
+    * @apiParamExample {json} Response:
+    {
+    "message": "List of imported projects fetched",
+    "status": 200,
+    "result": [
+        {
+            "_id": "60793b80bd49095a19ddeae1",
+            "description": "",
+            "title": "Project with learning resources",
+            "projectTemplateId": "60546a4cb807066d9cddba21",
+            "programInformation": {
+                "_id": "60545d541fc23d6d2d44c0c9",
+                "externalId": "PGM-3542-3.8.0_testing_program-2",
+                "description": "3.8.0 testing program - 2",
+                "name": "3.8.0 testing program - 2"
+            },
+            "solutionInformation": {
+                "_id": "605468721fc23d6d2d44c0cb",
+                "externalId": "IMP-3542_solution2",
+                "description": "",
+                "name": "Project with learning resources"
+            }
+        }
+    ]}
+    * @apiUse successBody
+    * @apiUse errorBody
+    */
+
+    /*
+    * List of user imported projects
+    * @method
+    * @name importedProjects
+    * @returns {JSON} List of imported projects.
+     */
+
+    async importedProjects(req) {
+        return new Promise(async (resolve, reject) => {
+            try {
+
+                let importedProjects = await userProjectsHelper.importedProjects(
+                    req.userDetails.userInformation.userId,
+                    req.params._id ? req.params._id : ""
+                );
+
+                importedProjects["result"] = importedProjects["data"];
+
+                return resolve(importedProjects);
+
+            } catch (error) {
+                return reject({
+                    status: error.status || HTTP_STATUS_CODE.internal_server_error.status,
+                    message: error.message || HTTP_STATUS_CODE.internal_server_error.message,
+                    errorObject: error
+                });
+            }
+        })
+    }
 };
