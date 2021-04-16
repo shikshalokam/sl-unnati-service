@@ -2192,12 +2192,12 @@ module.exports = class UserProjectsHelper {
                             projectCreation.data.hasAcceptedTAndC = bodyData.hasAcceptedTAndC;
                         }
 
-                        if( bodyData.importedProject ) {
-                            projectCreation.data.importedProject = bodyData.importedProject;
-                        }
-
                         if( bodyData.referenceFrom ) {
                             projectCreation.data.referenceFrom = bodyData.referenceFrom;
+                            
+                            if( bodyData.submissions ) {
+                                projectCreation.data.submissions = bodyData.submissions;
+                            }
                         }
     
                         if( bodyData.role ) {
@@ -2818,7 +2818,7 @@ module.exports = class UserProjectsHelper {
 
             let filterQuery = {
                 userId : userId,
-                importedProject : true,
+                referenceFrom : { $exists : true,$eq : CONSTANTS.common.OBSERVATION_REFERENCE_KEY },
                 isDeleted: false
             };
 
