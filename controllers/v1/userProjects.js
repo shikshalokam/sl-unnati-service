@@ -1409,6 +1409,29 @@ module.exports = class UserProjects extends Abstract {
     * @apiGroup Lists of User Imported Projects
     * @apiSampleRequest /improvement-project/api/v1/userProjects/importedProjects/60545d541fc23d6d2d44c0c9
     * @apiParamExample {json} Response:
+    {
+    "message": "List of imported projects fetched",
+    "status": 200,
+    "result": [
+        {
+            "_id": "60793b80bd49095a19ddeae1",
+            "description": "",
+            "title": "Project with learning resources",
+            "projectTemplateId": "60546a4cb807066d9cddba21",
+            "programInformation": {
+                "_id": "60545d541fc23d6d2d44c0c9",
+                "externalId": "PGM-3542-3.8.0_testing_program-2",
+                "description": "3.8.0 testing program - 2",
+                "name": "3.8.0 testing program - 2"
+            },
+            "solutionInformation": {
+                "_id": "605468721fc23d6d2d44c0cb",
+                "externalId": "IMP-3542_solution2",
+                "description": "",
+                "name": "Project with learning resources"
+            }
+        }
+    ]}
     * @apiUse successBody
     * @apiUse errorBody
     */
