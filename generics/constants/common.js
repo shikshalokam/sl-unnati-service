@@ -32,4 +32,5 @@ module.exports = {
     "CREATED_BY_ME" : "createdByMe",
     "DEFAULT_PAGE_NO" : 1,
     "DEFAULT_PAGE_SIZE" : 100,
+    "OBSERVATION_REFERENCE_KEY" : "observation"
 };
