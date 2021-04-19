@@ -2590,6 +2590,7 @@ module.exports = class UserProjectsHelper {
                             "metaInformation.goal",
                             "metaInformation.duration",
                             "startDate",
+                            "description",
                             "endDate",
                             "tasks",
                             "categories",
@@ -2604,7 +2605,7 @@ module.exports = class UserProjectsHelper {
                     { "$match": { _id: ObjectId(projectId), isDeleted: false} },
                     { "$project": {
                         "status": 1, "title": 1, "startDate": 1, "metaInformation.goal": 1, "metaInformation.duration":1,
-                        "categories" : 1, "programInformation.name": 1,
+                        "categories" : 1, "programInformation.name": 1, "description" : 1,
                         tasks: { "$filter": {
                             input: '$tasks',
                             as: 'tasks',
@@ -2633,7 +2634,7 @@ module.exports = class UserProjectsHelper {
                         projectDocument.category.push(category.name);
                     })
                 }
-
+                
                 let tasks = [];
                 if (projectDocument.tasks.length > 0) {
                     projectDocument.tasks.forEach( task => {
