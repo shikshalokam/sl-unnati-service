@@ -1663,8 +1663,10 @@ module.exports = class UserProjectsHelper {
                         entityId: assessmentOrObservationData.entityId,
                         programId: assessmentOrObservationData.programId,
                         project: {
-                            "_id": project[0].projectTemplateId,
-                            "taskId": currentTask.externalId
+                            // "_id": project[0].projectTemplateId,
+                            // "taskId": currentTask.externalId
+                            "_id": projectId,
+                            "taskId": taskId
                         }
                     };
 
