@@ -1663,8 +1663,6 @@ module.exports = class UserProjectsHelper {
                         entityId: assessmentOrObservationData.entityId,
                         programId: assessmentOrObservationData.programId,
                         project: {
-                            // "_id": project[0].projectTemplateId,
-                            // "taskId": currentTask.externalId
                             "_id": projectId,
                             "taskId": taskId
                         }
@@ -1709,8 +1707,8 @@ module.exports = class UserProjectsHelper {
             } catch (error) {
                 return resolve({
                     status:
-                        error.status ?
-                            error.status : HTTP_STATUS_CODE['internal_server_error'].status,
+                    error.status ?
+                    error.status : HTTP_STATUS_CODE['internal_server_error'].status,
                     success: false,
                     message: error.message,
                     data: {}
@@ -2230,6 +2228,7 @@ module.exports = class UserProjectsHelper {
     
                     projectCreation.data.status = CONSTANTS.common.NOT_STARTED_STATUS;
                     projectCreation.data.lastDownloadedAt = new Date();
+                    projectCreation.data.userRoleInformtion = _.omit(bodyData,["referenceFrom","submissions","hasAcceptedTAndC"]);
     
                     let project = await database.models.projects.create(projectCreation.data);
                     projectId = project._id;
