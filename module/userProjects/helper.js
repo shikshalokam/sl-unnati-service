@@ -1221,7 +1221,7 @@ module.exports = class UserProjectsHelper {
      * @returns {Object} 
     */
 
-    static details(projectId, userId) {
+    static details(projectId, userId,userRoleInformtion = {}) {
         return new Promise(async (resolve, reject) => {
             try {
 
@@ -1240,6 +1240,7 @@ module.exports = class UserProjectsHelper {
                         "updatedBy",
                         "createdAt",
                         "updatedAt",
+                        "userRoleInformation",
                         "__v"
                     ]);
 
@@ -1248,6 +1249,17 @@ module.exports = class UserProjectsHelper {
                     throw {
                         status: HTTP_STATUS_CODE["bad_request"].status,
                         message: CONSTANTS.apiResponses.PROJECT_NOT_FOUND
+                    }
+                }
+
+                if (Object.keys(userRoleInformtion).length > 0) {
+
+                    if (!projectDetails[0].userRoleInformtion || !Object.keys(projectDetails[0].userRoleInformtion).length > 0) {
+                        await database.models.projects.findOneAndUpdate({
+                            _id: projectId
+                        },{
+                            $set: {userRoleInformtion: userRoleInformtion}
+                        });
                     }
                 }
 
@@ -2086,6 +2098,8 @@ module.exports = class UserProjectsHelper {
                 solutionExternalId = templateDocuments[0].solutionExternalId;
             }
 
+            let userRoleInformation = _.omit(bodyData,["referenceFrom","submissions","hasAcceptedTAndC"]);
+
             if (projectId === "") {
                 
                 const projectDetails = await this.projectDocument({
@@ -2228,14 +2242,18 @@ module.exports = class UserProjectsHelper {
     
                     projectCreation.data.status = CONSTANTS.common.NOT_STARTED_STATUS;
                     projectCreation.data.lastDownloadedAt = new Date();
-                    projectCreation.data.userRoleInformtion = _.omit(bodyData,["referenceFrom","submissions","hasAcceptedTAndC"]);
+                    projectCreation.data.userRoleInformtion = userRoleInformation;
     
                     let project = await database.models.projects.create(projectCreation.data);
                     projectId = project._id;
                 }
             }
 
-            let projectDetails = await this.details(projectId, userId);
+            let projectDetails = await this.details(
+                projectId, 
+                userId,
+                userRoleInformation
+            );
             
             return resolve({
                 success: true,
