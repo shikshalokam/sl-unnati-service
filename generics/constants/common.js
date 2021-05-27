@@ -32,5 +32,9 @@ module.exports = {
     "CREATED_BY_ME" : "createdByMe",
     "DEFAULT_PAGE_NO" : 1,
     "DEFAULT_PAGE_SIZE" : 100,
-    "OBSERVATION_REFERENCE_KEY" : "observation"
+    "OBSERVATION_REFERENCE_KEY" : "observation",
+    "ALLOW_MULTIPLE_ASSESSMENTS" :  "allowMultipleAssessemts",
+    "IS_RUBRIC_DRIVEN" :  "isRubricDriven",
+    "CRITERIA_LEVEL_REPORT" :  "criteriaLevelReport"
+
 };

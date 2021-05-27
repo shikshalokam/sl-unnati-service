@@ -1646,6 +1646,50 @@ module.exports = class UserProjectsHelper {
 
                 let currentTask = project[0].tasks.find(task => task._id == taskId);
 
+                let solutionDetails = currentTask.solutionDetails;
+                let addTosolutionDetails = {};
+
+                if(currentTask.type == CONSTANTS.common.OBSERVATION){
+
+                    if (!(CONSTANTS.common.ALLOW_MULTIPLE_ASSESSMENTS in solutionDetails) || !(CONSTANTS.common.IS_RUBRIC_DRIVEN in solutionDetails) || !(CONSTANTS.common.CRITERIA_LEVEL_REPORT in solutionDetails)) {
+
+                        let solutionData = await assessmentService.listSolutions([solutionDetails.externalId]);
+
+                        if(solutionData.success ) {
+
+                            if(solutionData.data[0]){
+
+                                addTosolutionDetails.allowMultipleAssessemts = solutionData.data[0].allowMultipleAssessemts;
+                                addTosolutionDetails.isRubricDriven = solutionData.data[0].isRubricDriven;
+                                addTosolutionDetails.criteriaLevelReport = solutionData.data[0].criteriaLevelReport ? solutionData.data[0].criteriaLevelReport : "";
+
+                            }
+                        } 
+                    }
+
+                    if(!(_.isEmpty(addTosolutionDetails))){
+
+                        solutionDetails = _.merge(solutionDetails, addTosolutionDetails);
+
+                        let updateProjectData = await database.models.projects.findOneAndUpdate({
+                            "_id": projectId,
+                            "tasks._id": taskId
+                        }, {
+                            $set: {
+                                "tasks.$.solutionDetails": solutionDetails
+                            }
+                        });
+
+                        let updateProjectTemplateTask = await database.models.projectTemplateTasks.findOneAndUpdate({
+                            "externalId": currentTask.externalId 
+                        }, {
+                            $set: {
+                                "solutionDetails": solutionDetails
+                            }
+                        });
+                    }
+                }
+
                 let assessmentOrObservationData = {
                     entityId: project[0].entityInformation._id,
                     programId: project[0].programInformation._id
@@ -1654,9 +1698,7 @@ module.exports = class UserProjectsHelper {
                 if (currentTask.submissionDetails) {
                     assessmentOrObservationData = currentTask.submissionDetails;
                 } else {
-
-                    let solutionDetails = currentTask.solutionDetails;
-
+    
                     let assessmentOrObservation = {
                         token: userToken,
                         solutionDetails: solutionDetails,
@@ -1697,6 +1739,10 @@ module.exports = class UserProjectsHelper {
                 }
 
                 assessmentOrObservationData["entityType"] = project[0].entityInformation.entityType;
+                
+                if (!(_.isEmpty(addTosolutionDetails))){
+                    assessmentOrObservationData = _.merge(assessmentOrObservationData, addTosolutionDetails);
+                }
 
                 return resolve({
                     success: true,
