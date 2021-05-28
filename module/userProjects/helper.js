@@ -1658,6 +1658,8 @@ module.exports = class UserProjectsHelper {
 
                 let currentTask = project[0].tasks.find(task => task._id == taskId);
 
+                let solutionDetails = currentTask.solutionDetails;
+
                 let assessmentOrObservationData = {
                     entityId: project[0].entityInformation._id,
                     programId: project[0].programInformation._id
@@ -1666,9 +1668,7 @@ module.exports = class UserProjectsHelper {
                 if (currentTask.submissionDetails) {
                     assessmentOrObservationData = currentTask.submissionDetails;
                 } else {
-
-                    let solutionDetails = currentTask.solutionDetails;
-
+    
                     let assessmentOrObservation = {
                         token: userToken,
                         solutionDetails: solutionDetails,
@@ -1709,6 +1709,11 @@ module.exports = class UserProjectsHelper {
                 }
 
                 assessmentOrObservationData["entityType"] = project[0].entityInformation.entityType;
+
+                if(currentTask.solutionDetails && !(_.isEmpty(currentTask.solutionDetails))) {
+
+                    assessmentOrObservationData.solutionDetails = currentTask.solutionDetails;
+                }
 
                 return resolve({
                     success: true,
