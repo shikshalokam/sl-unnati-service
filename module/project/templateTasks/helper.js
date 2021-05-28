@@ -292,7 +292,7 @@ module.exports = class ProjectTemplateTasksHelper {
                                 allValues.solutionDetails = 
                                 _.pick(
                                     solutionData[parsedData.solutionId],
-                                    ["_id","isReusable","externalId","name","programId","type","subType"]
+                                    ["_id","isReusable","externalId","name","programId","type","subType","allowMultipleAssessemts","isRubricDriven","criteriaLevelReport"]
                                 );
                             }
 
@@ -334,10 +334,8 @@ module.exports = class ProjectTemplateTasksHelper {
                     let taskData = {};
 
                     if( !update ) {
-                    
                         taskData = 
                         await database.models.projectTemplateTasks.create(allValues);
-    
                         if ( !taskData._id ) {
                             parsedData.STATUS = 
                             CONSTANTS.apiResponses.PROJECT_TEMPLATE_TASKS_NOT_CREATED;
