@@ -1698,10 +1698,9 @@ module.exports = class UserProjectsHelper {
 
                 assessmentOrObservationData["entityType"] = project[0].entityInformation.entityType;
 
-                if(currentTask.type == CONSTANTS.common.OBSERVATION && !(_.isEmpty(currentTask.solutionDetails))) {
+                if(!(_.isEmpty(currentTask.solutionDetails))) {
 
-                    let plucksolutionDetails = _.pick(solutionDetails, [CONSTANTS.common.ALLOW_MULTIPLE_ASSESSMENTS,CONSTANTS.common.IS_RUBRIC_DRIVEN,CONSTANTS.common.CRITERIA_LEVEL_REPORT]);
-                    assessmentOrObservationData = _.merge(assessmentOrObservationData, plucksolutionDetails);
+                    assessmentOrObservationData.solutionDetails = currentTask.solutionDetails;
                 }
 
                 return resolve({
