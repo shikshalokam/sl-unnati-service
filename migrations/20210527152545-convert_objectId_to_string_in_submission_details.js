@@ -67,9 +67,6 @@ module.exports = {
                    }
                }))
            }
-   
-       console.log(updatedProjectIds,"updatedProjectIds") 
-   
     },
     async down(db) {
        // return await db.collection('albums').updateOne({artist: 'The Beatles'}, {$set: {blacklisted: false}});

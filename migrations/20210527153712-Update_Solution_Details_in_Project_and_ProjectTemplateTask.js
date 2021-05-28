@@ -67,23 +67,21 @@ module.exports = {
              }))
      }
  
-     console.log(updatedProjectIds,"updatedProjectIds")
- 
      let updatedProjectTempleteTaskIds = [];
-     let templeteTaskDocument = await db.collection('projectTemplateTasks').find({"type":"observation"}).project({ _id: 1}).toArray();
-     let chunkOfTempleteTaskDocument = _.chunk(templeteTaskDocument, 10);
-     let templeteTaskDocuments;
-     let templeteTaskIds;
+     let templateTaskDocument = await db.collection('projectTemplateTasks').find({"type":"observation"}).project({ _id: 1}).toArray();
+     let chunkOfTemplateTaskDocument = _.chunk(templateTaskDocument, 10);
+     let templateTaskDocuments;
+     let templateTaskIds;
  
-     for (let pointerToTempleteTask = 0; pointerToTempleteTask < chunkOfTempleteTaskDocument.length; pointerToTempleteTask++) {
-         templeteTaskIds = await chunkOfTempleteTaskDocument[pointerToTempleteTask].map(
+ a   for (let pointerToTemplateTask = 0; pointerToTempleteTask < chunkOfTempleteTaskDocuaent.length; pointerToTempleteTask++) {
+         templateTaskIds = await chunkOfTemplateTaskDocument[pointerToTempleteTask].map(
              templateDoc => {
                return templateDoc._id;
              }
          );
  
-         templeteTaskDocuments = await db.collection("projectTemplateTasks").find({
-           _id: { $in: templeteTaskIds },
+         templateTaskDocuments = await db.collection("projectTemplateTasks").find({
+           _id: { $in: templateTaskIds },
            type:"observation"
          }).project({
            "solutionDetails": 1,
@@ -91,18 +89,18 @@ module.exports = {
          }).toArray();
  
          await Promise.all(
-             templeteTaskDocuments.map(async eachTempleteTaskDocument => {
+             templateTaskDocuments.map(async eachTemplateTaskDocument => {
  
-                 if(eachTempleteTaskDocument.type == "observation"){
+                 if(eachTemplateTaskDocument.type == "observation"){
  
-                   let solutionId = eachTempleteTaskDocument.solutionDetails.externalId;
+                   let solutionId = eachTemplateTaskDocument.solutionDetails.externalId;
                      let solution = await db.collection('solutions').find({externalId: solutionId}).project({allowMultipleAssessemts: 1,isRubricDriven: 1,criteriaLevelReport: 1}).toArray();
                  
                      if(solution && solution.length > 0){
  
                          let solutionData = solution[0];
  
-                         let solutionDetails = eachTempleteTaskDocument.solutionDetails;
+                         let solutionDetails = eachTemplateTaskDocument.solutionDetails;
  
                          if (!("allowMultipleAssessemts" in solutionDetails) || !("isRubricDriven" in solutionDetails) || !("criteriaLevelReport" in solutionDetails)) {
    
@@ -111,21 +109,19 @@ module.exports = {
                              solutionDetails.criteriaLevelReport = solutionData.criteriaLevelReport ? solutionData.criteriaLevelReport : "";
  
                              let updateTempleteTask = await db.collection('projectTemplateTasks').findOneAndUpdate({
-                                 "_id": eachTempleteTaskDocument._id,
+                                 "_id": eachTemplateTaskDocument._id,
                              }, {
                                  $set: {
                                      "solutionDetails": solutionDetails
                                  }
                              });
  
-                             updatedProjectTempleteTaskIds.push(eachTempleteTaskDocument._id)
+                             updatedProjectTempleteTaskIds.push(eachTemplateTaskDocument._id)
                          }
                      }
                  }  
              }))
      }
- 
-     console.log(updatedProjectTempleteTaskIds,"updatedProjectTempleteTaskIds")
  
   },
   async down(db) {
