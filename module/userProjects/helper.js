@@ -1698,7 +1698,7 @@ module.exports = class UserProjectsHelper {
 
                 assessmentOrObservationData["entityType"] = project[0].entityInformation.entityType;
 
-                if(!(_.isEmpty(currentTask.solutionDetails))) {
+                if(currentTask.solutionDetails && !(_.isEmpty(currentTask.solutionDetails))) {
 
                     assessmentOrObservationData.solutionDetails = currentTask.solutionDetails;
                 }
