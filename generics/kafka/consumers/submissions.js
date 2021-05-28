@@ -25,9 +25,9 @@ var messageReceived = function (message) {
     try {
       
       let parsedMessage = JSON.parse(message.value);
-      let submissionId = parsedMessage._id;
+
       let submissionDocument = {
-        "submissionDetails._id" : submissionId.toString(),
+        "submissionDetails._id" : parsedMessage._id.toString(),
         "submissionDetails.status" : parsedMessage.status,
         "submissionDetails.completedDate" : 
         parsedMessage.submissionDate ? parsedMessage.submissionDate : ""
