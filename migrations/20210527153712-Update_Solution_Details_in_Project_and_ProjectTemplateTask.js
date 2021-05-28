@@ -67,14 +67,14 @@ module.exports = {
              }))
      }
  
-     let updatedProjectTempleteTaskIds = [];
+     let updatedProjectTemplateTaskIds = [];
      let templateTaskDocument = await db.collection('projectTemplateTasks').find({"type":"observation"}).project({ _id: 1}).toArray();
      let chunkOfTemplateTaskDocument = _.chunk(templateTaskDocument, 10);
      let templateTaskDocuments;
      let templateTaskIds;
  
- a   for (let pointerToTemplateTask = 0; pointerToTempleteTask < chunkOfTempleteTaskDocuaent.length; pointerToTempleteTask++) {
-         templateTaskIds = await chunkOfTemplateTaskDocument[pointerToTempleteTask].map(
+    for (let pointerToTemplateTask = 0; pointerToTemplateTask < chunkOfTemplateTaskDocument.length; pointerToTemplateTask++) {
+         templateTaskIds = await chunkOfTemplateTaskDocument[pointerToTemplateTask].map(
              templateDoc => {
                return templateDoc._id;
              }
@@ -108,7 +108,7 @@ module.exports = {
                              solutionDetails.isRubricDriven = solutionData.isRubricDriven;
                              solutionDetails.criteriaLevelReport = solutionData.criteriaLevelReport ? solutionData.criteriaLevelReport : "";
  
-                             let updateTempleteTask = await db.collection('projectTemplateTasks').findOneAndUpdate({
+                             let updateTemplateTask = await db.collection('projectTemplateTasks').findOneAndUpdate({
                                  "_id": eachTemplateTaskDocument._id,
                              }, {
                                  $set: {
@@ -116,7 +116,7 @@ module.exports = {
                                  }
                              });
  
-                             updatedProjectTempleteTaskIds.push(eachTemplateTaskDocument._id)
+                             updatedProjectTemplateTaskIds.push(eachTemplateTaskDocument._id)
                          }
                      }
                  }  
