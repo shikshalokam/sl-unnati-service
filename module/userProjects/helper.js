@@ -1651,7 +1651,9 @@ module.exports = class UserProjectsHelper {
 
                 if(currentTask.type == CONSTANTS.common.OBSERVATION){
 
-                    if (!(CONSTANTS.common.ALLOW_MULTIPLE_ASSESSMENTS in solutionDetails) || !(CONSTANTS.common.IS_RUBRIC_DRIVEN in solutionDetails) || !(CONSTANTS.common.CRITERIA_LEVEL_REPORT in solutionDetails)) {
+                    if (!(solutionDetails.hasOwnProperty(CONSTANTS.common.ALLOW_MULTIPLE_ASSESSMENTS)) || 
+                        !(solutionDetails.hasOwnProperty(CONSTANTS.common.IS_RUBRIC_DRIVEN)) ||
+                        !(solutionDetails.hasOwnProperty(CONSTANTS.common.CRITERIA_LEVEL_REPORT)) ){
 
                         let solutionData = await assessmentService.listSolutions([solutionDetails.externalId]);
 
