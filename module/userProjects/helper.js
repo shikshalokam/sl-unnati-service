@@ -1221,7 +1221,7 @@ module.exports = class UserProjectsHelper {
      * @returns {Object} 
     */
 
-    static details(projectId, userId) {
+    static details(projectId, userId,userRoleInformtion = {}) {
         return new Promise(async (resolve, reject) => {
             try {
 
@@ -1240,6 +1240,7 @@ module.exports = class UserProjectsHelper {
                         "updatedBy",
                         "createdAt",
                         "updatedAt",
+                        "userRoleInformation",
                         "__v"
                     ]);
 
@@ -1248,6 +1249,17 @@ module.exports = class UserProjectsHelper {
                     throw {
                         status: HTTP_STATUS_CODE["bad_request"].status,
                         message: CONSTANTS.apiResponses.PROJECT_NOT_FOUND
+                    }
+                }
+
+                if (Object.keys(userRoleInformtion).length > 0) {
+
+                    if (!projectDetails[0].userRoleInformtion || !Object.keys(projectDetails[0].userRoleInformtion).length > 0) {
+                        await database.models.projects.findOneAndUpdate({
+                            _id: projectId
+                        },{
+                            $set: {userRoleInformtion: userRoleInformtion}
+                        });
                     }
                 }
 
@@ -1646,6 +1658,8 @@ module.exports = class UserProjectsHelper {
 
                 let currentTask = project[0].tasks.find(task => task._id == taskId);
 
+                let solutionDetails = currentTask.solutionDetails;
+
                 let assessmentOrObservationData = {
                     entityId: project[0].entityInformation._id,
                     programId: project[0].programInformation._id
@@ -1654,17 +1668,15 @@ module.exports = class UserProjectsHelper {
                 if (currentTask.submissionDetails) {
                     assessmentOrObservationData = currentTask.submissionDetails;
                 } else {
-
-                    let solutionDetails = currentTask.solutionDetails;
-
+    
                     let assessmentOrObservation = {
                         token: userToken,
                         solutionDetails: solutionDetails,
                         entityId: assessmentOrObservationData.entityId,
                         programId: assessmentOrObservationData.programId,
                         project: {
-                            "_id": project[0].projectTemplateId,
-                            "taskId": currentTask.externalId
+                            "_id": projectId,
+                            "taskId": taskId
                         }
                     };
 
@@ -1698,6 +1710,11 @@ module.exports = class UserProjectsHelper {
 
                 assessmentOrObservationData["entityType"] = project[0].entityInformation.entityType;
 
+                if(currentTask.solutionDetails && !(_.isEmpty(currentTask.solutionDetails))) {
+
+                    assessmentOrObservationData.solutionDetails = currentTask.solutionDetails;
+                }
+
                 return resolve({
                     success: true,
                     message: CONSTANTS.apiResponses.SOLUTION_DETAILS_FETCHED,
@@ -1707,8 +1724,8 @@ module.exports = class UserProjectsHelper {
             } catch (error) {
                 return resolve({
                     status:
-                        error.status ?
-                            error.status : HTTP_STATUS_CODE['internal_server_error'].status,
+                    error.status ?
+                    error.status : HTTP_STATUS_CODE['internal_server_error'].status,
                     success: false,
                     message: error.message,
                     data: {}
@@ -2086,6 +2103,8 @@ module.exports = class UserProjectsHelper {
                 solutionExternalId = templateDocuments[0].solutionExternalId;
             }
 
+            let userRoleInformation = _.omit(bodyData,["referenceFrom","submissions","hasAcceptedTAndC"]);
+
             if (projectId === "") {
                 
                 const projectDetails = await this.projectDocument({
@@ -2228,13 +2247,18 @@ module.exports = class UserProjectsHelper {
     
                     projectCreation.data.status = CONSTANTS.common.NOT_STARTED_STATUS;
                     projectCreation.data.lastDownloadedAt = new Date();
+                    projectCreation.data.userRoleInformtion = userRoleInformation;
     
                     let project = await database.models.projects.create(projectCreation.data);
                     projectId = project._id;
                 }
             }
 
-            let projectDetails = await this.details(projectId, userId);
+            let projectDetails = await this.details(
+                projectId, 
+                userId,
+                userRoleInformation
+            );
             
             return resolve({
                 success: true,
