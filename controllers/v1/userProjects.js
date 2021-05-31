@@ -1005,6 +1005,19 @@ module.exports = class UserProjects extends Abstract {
         "programId": "5fba54dc2a1f7b172f066597",
         "observationId": "5d1a002d2dfd8135bc8e1617",
         "solutionId": "5d15b0d7463d3a6961f91749"
+        “solutionDetails”:{
+            "_id" : "60b06e30343385596ef48c25",
+            "isReusable" : false,
+            "externalId" : "NEW-TEST-SOLUTION",
+            "name" : "NEW-TEST-SOLUTION",
+            "programId" : "600ab53cc7de076e6f993724",
+            "type" : "observation",
+            "subType" : "district",
+            "isRubricDriven" : true,
+            "criteriaLevelReport" : "",
+            "allowMultipleAssessemts" : false
+        }
+
     }
     }
     * @apiUse successBody
