@@ -882,12 +882,12 @@ module.exports = class UserProjectsHelper {
                     };
                 }
 
-                if (userProject[0].lastDownloadedAt.toISOString() !== lastDownloadedAt) {
-                    throw {
-                        status: HTTP_STATUS_CODE['bad_request'].status,
-                        message: CONSTANTS.apiResponses.USER_ALREADY_SYNC
-                    };
-                }
+                // if (userProject[0].lastDownloadedAt.toISOString() !== lastDownloadedAt) {
+                //     throw {
+                //         status: HTTP_STATUS_CODE['bad_request'].status,
+                //         message: CONSTANTS.apiResponses.USER_ALREADY_SYNC
+                //     };
+                // }
 
                 const projectsModel = Object.keys(schemas["projects"].schema);
 
@@ -1023,6 +1023,10 @@ module.exports = class UserProjectsHelper {
                                     task
                                 );
                             } else {
+
+                                if (userProject[0].tasks[taskIndex].submissionDetails) {
+                                    task.submissionDetails = userProject[0].tasks[taskIndex].submissionDetails;
+                                }
                                 userProject[0].tasks[taskIndex] = task;
                             }
                         });
