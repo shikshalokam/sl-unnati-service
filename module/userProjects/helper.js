@@ -1023,6 +1023,10 @@ module.exports = class UserProjectsHelper {
                                     task
                                 );
                             } else {
+
+                                if (userProject[0].tasks[taskIndex].submissionDetails) {
+                                    task.submissionDetails = userProject[0].tasks[taskIndex].submissionDetails;
+                                }
                                 userProject[0].tasks[taskIndex] = task;
                             }
                         });
