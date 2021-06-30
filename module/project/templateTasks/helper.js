@@ -292,7 +292,7 @@ module.exports = class ProjectTemplateTasksHelper {
                                 allValues.solutionDetails = 
                                 _.pick(
                                     solutionData[parsedData.solutionId],
-                                    ["_id","isReusable","externalId","name","programId","type","subType","allowMultipleAssessemts","isRubricDriven","criteriaLevelReport"]
+                                    ["_id","isReusable","externalId","name","programId","type","subType","allowMultipleAssessemts","isRubricDriven","criteriaLevelReport","scoringSystem"]
                                 );
                             }
 

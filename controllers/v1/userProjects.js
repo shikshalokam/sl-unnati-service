@@ -1015,7 +1015,8 @@ module.exports = class UserProjects extends Abstract {
             "subType" : "district",
             "isRubricDriven" : true,
             "criteriaLevelReport" : "",
-            "allowMultipleAssessemts" : false
+            "allowMultipleAssessemts" : false,
+            "scoringSystem": ""
         }
 
     }
