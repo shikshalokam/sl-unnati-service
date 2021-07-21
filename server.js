@@ -23,6 +23,7 @@ const swaggerDocument       = require('./config/swagger.json');
 var config                  = require('./config/config.json');
 var port                    = config.PORT;
 var app                     = express();
+require("./healthCheck")(app);
 var morgan                  = require('morgan');
 var winston                 = require('./config/winston');
 var mongoose                = require('mongoose');
