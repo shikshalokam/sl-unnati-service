@@ -21,7 +21,7 @@ function health_check() {
     return new Promise(async (resolve, reject) => {
         try {
 
-            let healthCheckUrl = config.userManagementService.HOST + "/healthCheckStatus";
+            let healthCheckUrl = process.env.USER_MANAGEMENT_HOST + "/healthCheckStatus";
 
             const options = {
                 headers : {
