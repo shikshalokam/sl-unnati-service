@@ -22,7 +22,7 @@ function health_check() {
         try {
 
             let healthCheckUrl = 
-            process.env.config.dhiti_config.api_base_url +  "/healthCheckStatus";
+            config.dhiti_config.api_base_url +  "/healthCheckStatus";
 
             const options = {
                 headers : {
