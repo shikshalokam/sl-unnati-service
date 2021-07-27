@@ -21,6 +21,7 @@ function health_check() {
             return resolve(false);
         })
         producer.on('ready', function () {
+            client.close();
             return resolve(true);
         });
     })
