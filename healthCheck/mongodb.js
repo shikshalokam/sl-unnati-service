@@ -20,9 +20,7 @@ function health_check() {
             return resolve(false)
         });
         db.once("open", function() {
-            mongoose.connection.close(function () {
-                console.log('Mongoose connection disconnected');
-            });
+            db.close(function () { });
             return resolve(true);    
         });
     })
