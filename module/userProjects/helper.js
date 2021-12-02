@@ -1024,8 +1024,8 @@ module.exports = class UserProjectsHelper {
                                 );
                             } else {
 
-                                if (userProject[0].tasks[taskIndex].submissionDetails) {
-                                    task.submissionDetails = userProject[0].tasks[taskIndex].submissionDetails;
+                                if (userProject[0].tasks[taskIndex].submissions) {
+                                    task.submissions = userProject[0].tasks[taskIndex].submissions;
                                 }
                                 userProject[0].tasks[taskIndex] = task;
                             }
@@ -1562,8 +1562,36 @@ module.exports = class UserProjectsHelper {
                         currentTask.type === CONSTANTS.common.OBSERVATION
                     ) {
 
-                        data["submissionDetails"] =
-                            currentTask.submissionDetails ? currentTask.submissionDetails : {};
+                        let completedSubmissionCount = 0;
+                        let minNoOfSubmissionsRequired = currentTask.solutionDetails.minNoOfSubmissionsRequired ? currentTask.solutionDetails.minNoOfSubmissionsRequired : CONSTANTS.common.DEFAULT_SUBMISSION_REQUIRED;
+
+                        data["submissionStatus"] = CONSTANTS.common.STARTED;
+
+                        let submissionDetails = currentTask.observationInformation ? currentTask.observationInformation : {};
+                        data["submissionDetails"] = submissionDetails;
+
+                        if ( currentTask.submissions && currentTask.submissions.length > 0 ) {
+
+                            let completedSubmissionDoc;
+                            completedSubmissionCount = currentTask.submissions.filter((eachSubmission) => eachSubmission.status === CONSTANTS.common.COMPLETED_STATUS).length;
+
+                            if (completedSubmissionCount >= minNoOfSubmissionsRequired ) {
+ 
+                                completedSubmissionDoc = currentTask.submissions.find(eachSubmission => eachSubmission.status === CONSTANTS.common.COMPLETED_STATUS);
+                                data.submissionStatus = CONSTANTS.common.COMPLETED_STATUS;
+
+                            } else {
+
+                                completedSubmissionDoc = currentTask.submissions.find(eachSubmission => eachSubmission.status === CONSTANTS.common.STARTED);
+                            }
+
+                            Object.assign(data["submissionDetails"],completedSubmissionDoc)
+
+                        } else {
+
+                            data["submissionDetails"].status = CONSTANTS.common.STARTED;
+                        }
+                        
                     }
 
                     result.push(data);
@@ -1598,21 +1626,19 @@ module.exports = class UserProjectsHelper {
      * @returns {Object}
     */
 
-    static updateTask(projectId, taskId, updatedData) {
+    static pushSubmissionToTask(projectId, taskId, updatedData) {
         return new Promise(async (resolve, reject) => {
             try {
 
                 let update = {};
 
-                Object.keys(updatedData).forEach(taskData => {
-                    update["tasks.$." + taskData] = updatedData[taskData];
-                });
+                update["tasks.$." + "submissions"] = updatedData
 
                 const tasksUpdated =
                     await database.models.projects.findOneAndUpdate({
                         _id: projectId,
                         "tasks._id": taskId
-                    }, { $set: update });
+                    }, { $push: update });
 
                 return resolve(tasksUpdated);
 
@@ -1646,7 +1672,8 @@ module.exports = class UserProjectsHelper {
                     "tasks.type",
                     "tasks._id",
                     "tasks.solutionDetails",
-                    "tasks.submissionDetails",
+                    "tasks.submissions",
+                    "tasks.observationInformation",
                     "tasks.externalId",
                     "programInformation._id",
                     "projectTemplateId"
@@ -1669,8 +1696,8 @@ module.exports = class UserProjectsHelper {
                     programId: project[0].programInformation._id
                 }
 
-                if (currentTask.submissionDetails) {
-                    assessmentOrObservationData = currentTask.submissionDetails;
+                if (currentTask.observationInformation) {
+                    assessmentOrObservationData = currentTask.observationInformation;
                 } else {
     
                     let assessmentOrObservation = {
@@ -1706,7 +1733,7 @@ module.exports = class UserProjectsHelper {
                         "tasks._id": taskId
                     }, {
                         $set: {
-                            "tasks.$.submissionDetails": assessmentOrObservationData
+                            "tasks.$.observationInformation": assessmentOrObservationData
                         }
                     });
 

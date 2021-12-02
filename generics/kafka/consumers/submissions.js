@@ -27,14 +27,13 @@ var messageReceived = function (message) {
       let parsedMessage = JSON.parse(message.value);
 
       let submissionDocument = {
-        "submissionDetails._id" : parsedMessage._id.toString(),
-        "submissionDetails.status" : parsedMessage.status,
-        "submissionDetails.completedDate" : 
-        parsedMessage.submissionDate ? parsedMessage.submissionDate : ""
+        "_id" : parsedMessage._id.toString(),
+        "status" : parsedMessage.status,
+        "completedDate" : parsedMessage.submissionDate ? parsedMessage.submissionDate : ""
       };
 
 
-      await userProjectsHelper.updateTask(
+      await userProjectsHelper.pushSubmissionToTask(
         parsedMessage.projectId,
         parsedMessage.taskId,
         submissionDocument

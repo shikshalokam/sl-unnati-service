@@ -289,11 +289,30 @@ module.exports = class ProjectTemplateTasksHelper {
                                 CONSTANTS.apiResponses.MIS_MATCHED_PROJECT_AND_TASK_ENTITY_TYPE;
                             } else {
 
-                                allValues.solutionDetails = 
-                                _.pick(
+                                let projectionFields = _solutionDocumentProjectionFieldsForTask();
+                                allValues.solutionDetails["minNoOfSubmissionsRequired"] = CONSTANTS.common.DEFAULT_SUBMISSION_REQUIRED;
+
+                                if (parsedData.minNoOfSubmissionsRequired && parsedData.minNoOfSubmissionsRequired != "" ) {
+
+                                    // minNoOfSubmissionsRequired present in csv
+                                    if ( parsedData.minNoOfSubmissionsRequired > CONSTANTS.common.DEFAULT_SUBMISSION_REQUIRED ) {
+                                        if ( solutionData[parsedData.solutionId].allowMultipleAssessemts ) {
+                                            allValues.solutionDetails["minNoOfSubmissionsRequired"] = parsedData.minNoOfSubmissionsRequired;
+                                        } 
+                                    }
+
+                                }else{
+                                    // minNoOfSubmissionsRequired not present in csv
+                                    if (solutionData[parsedData.solutionId].minNoOfSubmissionsRequired ) {
+                                        projectionFields.push("minNoOfSubmissionsRequired");
+                                    }
+                                }
+
+                                Object.assign(allValues.solutionDetails, _.pick(
                                     solutionData[parsedData.solutionId],
-                                    ["_id","isReusable","externalId","name","programId","type","subType","allowMultipleAssessemts","isRubricDriven","criteriaLevelReport","scoringSystem"]
-                                );
+                                    projectionFields
+                                ))
+
                             }
 
                         }
@@ -623,3 +642,29 @@ module.exports = class ProjectTemplateTasksHelper {
         })
     }
 };
+
+/**
+    *  Helper function for list of solution fields to be sent in response.
+    * @method
+    * @name solutionDocumentProjectionFieldsForTask
+    * @returns {Promise} Returns a Promise.
+    */
+
+function _solutionDocumentProjectionFieldsForTask() {
+
+    let projectionFields = [
+                "_id",
+                "isReusable",
+                "externalId",
+                "name",
+                "programId",
+                "type",
+                "subType",
+                "allowMultipleAssessemts",
+                "isRubricDriven",
+                "criteriaLevelReport",
+                "scoringSystem"
+            ];
+
+    return projectionFields;
+}

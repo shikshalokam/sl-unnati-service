@@ -115,5 +115,6 @@ module.exports = {
     "COULD_NOT_GENERATE_PDF_REPORT": "Could not generate pdf report",
     "PROJECT_TEMPLATE_DETAILS_FETCHED": "Successfully fetched project template details",
     "PROJECT_TEMPLATE_EXISTS_IN_SOLUTION" : "Project templates already exists in solution",
-    "IMPORTED_PROJECTS_FETCHED" : "List of imported projects fetched"
+    "IMPORTED_PROJECTS_FETCHED" : "List of imported projects fetched",
+    "MIN_NO_OF_SUBMISSION_REQUIRED_MIS_MATCHED" : "minNoOfSubmissionsRequired should be 1 because allowMultipleAssessemts is false"
 };
