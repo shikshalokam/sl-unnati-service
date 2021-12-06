@@ -481,7 +481,7 @@ module.exports = class ProjectTemplatesHelper {
                             status : CONSTANTS.common.PUBLISHED,
                             _id : currentData._SYSTEM_ID,
                             status : CONSTANTS.common.PUBLISHED
-                        },["_id","categories"]);
+                        },["_id","categories", "isReusable"]);
 
                         if ( !(template.length > 0 && template[0]._id) ) {
                             currentData["UPDATE_STATUS"] = 
@@ -493,6 +493,10 @@ module.exports = class ProjectTemplatesHelper {
                                 csvInformation.data,
                                 userId
                             );
+
+                            if(template[0].isReusable === false) {
+                                templateData.isReusable = false;
+                            }
 
                             templateData.updatedBy = userId;
 
