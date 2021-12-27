@@ -116,5 +116,8 @@ module.exports = {
     "PROJECT_TEMPLATE_DETAILS_FETCHED": "Successfully fetched project template details",
     "PROJECT_TEMPLATE_EXISTS_IN_SOLUTION" : "Project templates already exists in solution",
     "IMPORTED_PROJECTS_FETCHED" : "List of imported projects fetched",
-    "MIN_NO_OF_SUBMISSION_REQUIRED_MIS_MATCHED" : "minNoOfSubmissionsRequired should be 1 because allowMultipleAssessemts is false"
+    "MIN_NO_OF_SUBMISSION_REQUIRED_MIS_MATCHED" : "minNoOfSubmissionsRequired should be 1 because allowMultipleAssessemts is false",
+    "TEMPLATE_TASK_NOT_UPDATED": "Could not updated template task",
+    "PROJECT_TEMPLATE_UPDATED" : "Successfully updated project template",
+    "PROJECT_TEMPLATE_TASK_UPDATED" : "Successfully updated project template task"
 };

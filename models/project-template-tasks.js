@@ -79,6 +79,9 @@ module.exports = {
         learningResources : {
             type : Array,
             default : []
+        },
+        sequenceNumber: {
+            type : String
         }
     }
 };

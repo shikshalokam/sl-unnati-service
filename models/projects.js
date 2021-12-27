@@ -120,6 +120,10 @@ module.exports = {
             type : String,
             index : true
         },
-        submissions : Object
+        submissions : Object,
+        taskSequence : {
+            type : Array,
+            default : []
+        }
     }
 };

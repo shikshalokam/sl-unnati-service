@@ -641,6 +641,73 @@ module.exports = class ProjectTemplateTasksHelper {
             }
         })
     }
+
+    /**
+      * Task update.
+      * @method
+      * @name update
+      * @param {String} taskId - Task id.
+      * @param {Object} taskData - template task updation data
+      * @param {String} userId - logged in user id.
+      * @returns {Array} Project templates task data.
+     */
+
+    static update( taskId, taskData, userId ) {
+        return new Promise(async (resolve, reject) => {
+            try {
+
+                let findQuery = {};
+
+                let validateTaskId = UTILS.isValidMongoId(taskId);
+
+                if( validateTaskId ) {
+                  findQuery["_id"] = taskId;
+                } else {
+                  findQuery["externalId"] = taskId;
+                }
+
+                let taskDocument = await this.taskDocuments(findQuery, ["_id"]);
+
+                if ( !taskDocument.length > 0 ) {
+                    throw {
+                        status : HTTP_STATUS_CODE.bad_request.status,
+                        message : CONSTANTS.apiResponses.PROJECT_TEMPLATE_TASKS_NOT_FOUND
+                    }
+                }
+
+                let updateObject = {
+                    "$set" : {}
+                };
+
+                let taskUpdateData = taskData;
+
+                Object.keys(taskUpdateData).forEach(updationData=>{
+                    updateObject["$set"][updationData] = taskUpdateData[updationData];
+                });
+
+                updateObject["$set"]["updatedBy"] = userId;
+
+                let taskUpdatedData = await database.models.projectTemplateTasks.findOneAndUpdate({
+                    _id :  taskDocument[0]._id
+                }, updateObject, { new : true });
+
+                if( !taskUpdatedData._id ) {
+                    throw {
+                      message : constants.apiResponses.TEMPLATE_TASK_NOT_UPDATED
+                    }
+                }
+
+                return resolve({
+                    success : true,
+                    data : taskUpdatedData,
+                    message : CONSTANTS.apiResponses.PROJECT_TEMPLATE_TASK_UPDATED
+                });
+                
+            } catch (error) {
+                return reject(error);
+            }
+        })
+    }
 };
 
 /**

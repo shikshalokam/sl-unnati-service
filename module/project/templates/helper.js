@@ -1172,6 +1172,73 @@ module.exports = class ProjectTemplatesHelper {
        });
     }
 
+    /**
+      * Template update.
+      * @method
+      * @name update
+      * @param {String} templateId - Project template id.
+      * @param {Object} templateData - template updation data
+      * @param {String} userId - logged in user id.
+      * @returns {Array} Project templates data.
+     */
+
+    static update( templateId, templateData, userId ) {
+        return new Promise(async (resolve, reject) => {
+            try {
+
+                let findQuery = {};
+
+                let validateTemplateId = UTILS.isValidMongoId(templateId);
+
+                if( validateTemplateId ) {
+                  findQuery["_id"] = templateId;
+                } else {
+                  findQuery["externalId"] = templateId;
+                }
+
+                let templateDocument = await this.templateDocument(findQuery, ["_id"]);
+
+                if ( !templateDocument.length > 0 ) {
+                    throw {
+                        status : HTTP_STATUS_CODE.bad_request.status,
+                        message : CONSTANTS.apiResponses.PROJECT_TEMPLATE_NOT_FOUND
+                    }
+                }
+
+                let updateObject = {
+                    "$set" : {}
+                };
+
+                let templateUpdateData = templateData;
+
+                Object.keys(templateUpdateData).forEach(updationData=>{
+                    updateObject["$set"][updationData] = templateUpdateData[updationData];
+                });
+
+                updateObject["$set"]["updatedBy"] = userId;
+
+                let templateUpdatedData = await database.models.projectTemplates.findOneAndUpdate({
+                    _id :  templateDocument[0]._id
+                }, updateObject, { new : true });
+
+                if( !templateUpdatedData._id ) {
+                    throw {
+                      message : constants.apiResponses.PROJECT_TEMPLATE_NOT_UPDATED
+                    }
+                }
+
+                return resolve({
+                    success : true,
+                    data : templateUpdatedData,
+                    message : CONSTANTS.apiResponses.PROJECT_TEMPLATE_UPDATED
+                });
+                
+            } catch (error) {
+                return reject(error);
+            }
+        })
+    }
+
 };
 
 /**

@@ -687,4 +687,52 @@ module.exports = class ProjectTemplates extends Abstract {
         })
     }
 
+    /**
+    * @api {post} /improvement-project/api/v1/project/templates/update/:templateId 
+    * Update projects template.
+    * @apiVersion 1.0.0
+    * @apiGroup Project Templates
+    * @apiSampleRequest /improvement-project/api/v1/project/templates/update/6006b5cca1a95727dbcdf648
+    * @apiHeader {String} internal-access-token internal access token 
+    * @apiHeader {String} X-authenticated-user-token Authenticity token  
+    * @apiUse successBody
+    * @apiUse errorBody
+    * @apiParamExample {json} Response:
+    * {
+    *  "status": 200,
+        "message": "template updated successfully"
+    }
+    */
+
+      /**
+      * Update project templates
+      * @method
+      * @name update
+      * @returns {JSON} returns uploaded project template.
+     */
+
+    async update(req) {
+        return new Promise(async (resolve, reject) => {
+            try {
+
+                let projectTemplate = await projectTemplatesHelper.update(
+                  req.params._id, 
+                  req.body, 
+                  req.userDetails.userInformation.userId
+                );
+
+                projectTemplate.result = projectTemplate.data;
+
+                return resolve(projectTemplate);
+
+            } catch (error) {
+                return reject({
+                    status: error.status || HTTP_STATUS_CODE.internal_server_error.status,
+                    message: error.message || HTTP_STATUS_CODE.internal_server_error.message,
+                    errorObject: error
+                });
+            }
+        })
+    }
+
 };
